@@ -1,16 +1,16 @@
+const fs = require('fs');
+const { extractAnnotationsAndLocations, formatOutput } = require('./annotation-location-extractor');
 
 // 读取HTML文件
-const fs = require('fs');
-const {generatePatchCorpus, formatCorpusForAI} = require("./a");
 const htmlContent = fs.readFileSync('index.html', 'utf8');
 
-// 提取语料
-const corpus = generatePatchCorpus(htmlContent);
+// 提取注释和位置信息
+const extractionResult = extractAnnotationsAndLocations(htmlContent);
 
-// 格式化为AI友好的格式
-const formattedCorpus = formatCorpusForAI(corpus);
+// 格式化为可读输出
+const formattedOutput = formatOutput(extractionResult);
 
-// 输出语料
-console.log(formattedCorpus);
+// 输出结果
+console.log(formattedOutput);
 // 或保存到文件
-fs.writeFileSync('index-corpus.md', formattedCorpus);
+fs.writeFileSync('functions-annotations.md', formattedOutput);

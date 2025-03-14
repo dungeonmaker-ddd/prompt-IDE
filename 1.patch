@@ -1,0 +1,539 @@
+Index: index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/index.html b/index.html
+--- a/index.html	(revision)
++++ b/index.html	(date)
+@@ -213,6 +213,126 @@
+       transition: box-shadow 0.3s, border-radius 0.3s;
+     }
+
++    /* 分割视图样式 */
++    .split-container {
++      display: flex;
++      height: 100%;
++      width: 100%;
++    }
++
++    .split-left {
++      flex: 1;
++      overflow-y: auto;
++      padding-right: 15px;
++      border-right: 1px solid #ddd;
++    }
++
++    .split-right {
++      width: 40%;
++      min-width: 400px;
++      padding-left: 15px;
++      overflow-y: auto;
++    }
++
++    /* 详情面板样式 */
++    .details-panel {
++      background-color: white;
++      border-radius: 8px;
++      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
++      margin-bottom: 20px;
++      overflow: hidden;
++    }
++
++    .details-header {
++      background-color: #4285f4;
++      color: white;
++      padding: 12px 15px;
++      border-bottom: 1px solid #ddd;
++    }
++
++    .details-title {
++      margin: 0;
++      font-size: 16px;
++      font-weight: bold;
++    }
++
++    .details-subtitle {
++      color: rgba(255, 255, 255, 0.8);
++      font-size: 12px;
++      margin-top: 5px;
++    }
++
++    .details-body {
++      padding: 15px;
++    }
++
++    .details-path {
++      font-family: monospace;
++      background-color: #f5f5f5;
++      padding: 8px;
++      border-radius: 4px;
++      margin-bottom: 15px;
++      word-break: break-all;
++      border: 1px solid #eee;
++    }
++
++    .details-info {
++      margin-bottom: 15px;
++    }
++
++    .details-info-item {
++      display: flex;
++      margin-bottom: 8px;
++      border-bottom: 1px solid #f0f0f0;
++      padding-bottom: 8px;
++    }
++
++    .details-info-label {
++      width: 100px;
++      color: #757575;
++      font-weight: bold;
++    }
++
++    .details-info-value {
++      flex: 1;
++    }
++
++    .details-content {
++      background-color: #f9f9f9;
++      border-radius: 4px;
++      padding: 10px;
++      max-height: 500px;
++      overflow-y: auto;
++      white-space: pre-wrap;
++      font-family: monospace;
++      border: 1px solid #eee;
++    }
++
++    .details-empty {
++      padding: 30px;
++      text-align: center;
++      color: #757575;
++      font-style: italic;
++    }
++
++    /* 内容预览不同文件类型样式 */
++    .content-image {
++      max-width: 100%;
++      max-height: 400px;
++      margin: 0 auto;
++      display: block;
++    }
++
++    .binary-file-notice {
++      text-align: center;
++      padding: 20px;
++      color: #f44336;
++      font-style: italic;
++    }
++
++    /* 选中项高亮样式 */
++    .file-item.selected, .directory-item.selected {
++      background-color: #e8f0fe;
++      border-left: 3px solid #4285f4;
++    }
++
+     /* 卡片内容区域平滑过渡效果 */
+     .card-content {
+       transition: height 0.3s ease-out, opacity 0.3s ease-out;
+@@ -1005,6 +1125,259 @@
+       document.querySelector('.controls').appendChild(collapseAllButton);
+     }
+
++    /**
++     * @function restructureMainContent
++     * @description 重构主要内容区域为左右分割布局
++     */
++    function restructureMainContent() {
++      const mainContent = document.querySelector('.main-content');
++
++      // 保存原有内容的引用
++      const controls = document.querySelector('.controls');
++      const boardContainer = document.getElementById('boardContainer');
++      const editorContainer = document.querySelector('.editor-container');
++
++      // 清空主内容区域
++      mainContent.innerHTML = '';
++
++      // 重新添加控制按钮区域
++      mainContent.appendChild(controls);
++
++      // 创建分割视图容器
++      const splitContainer = document.createElement('div');
++      splitContainer.className = 'split-container';
++
++      // 创建左侧区域
++      const splitLeft = document.createElement('div');
++      splitLeft.className = 'split-left';
++
++      // 创建右侧区域
++      const splitRight = document.createElement('div');
++      splitRight.className = 'split-right';
++
++      // 创建详情面板
++      const detailsPanel = createDetailsPanel();
++
++      // 将原有内容移动到左侧区域
++      splitLeft.appendChild(boardContainer);
++      splitLeft.appendChild(editorContainer);
++
++      // 将详情面板添加到右侧区域
++      splitRight.appendChild(detailsPanel);
++
++      // 将左右区域添加到分割容器
++      splitContainer.appendChild(splitLeft);
++      splitContainer.appendChild(splitRight);
++
++      // 将分割容器添加到主内容区域
++      mainContent.appendChild(splitContainer);
++    }
++
++    /**
++     * @function createDetailsPanel
++     * @description 创建右侧详情面板
++     * @returns {HTMLElement} 详情面板元素
++     */
++    function createDetailsPanel() {
++      const panel = document.createElement('div');
++      panel.className = 'details-panel';
++      panel.id = 'detailsPanel';
++
++      // 创建面板标题
++      const header = document.createElement('div');
++      header.className = 'details-header';
++
++      const title = document.createElement('h3');
++      title.className = 'details-title';
++      title.textContent = '选中项目详情';
++
++      const subtitle = document.createElement('div');
++      subtitle.className = 'details-subtitle';
++      subtitle.textContent = '选择左侧项目查看详情';
++
++      header.appendChild(title);
++      header.appendChild(subtitle);
++
++      // 创建面板内容区域
++      const body = document.createElement('div');
++      body.className = 'details-body';
++
++      // 初始状态为空
++      const emptyState = document.createElement('div');
++      emptyState.className = 'details-empty';
++      emptyState.textContent = '请选择一个项目以查看详情';
++
++      body.appendChild(emptyState);
++
++      // 组装详情面板
++      panel.appendChild(header);
++      panel.appendChild(body);
++
++      return panel;
++    }
++
++    /**
++     * @function displayItemDetails
++     * @description 在右侧面板显示所选项目的详细信息
++     * @param {string} cardId 卡片ID
++     * @param {string} itemType 项目类型 ('file' 或 'directory')
++     * @param {string} itemName 项目名称
++     * @param {FileSystemHandle} handle 文件或目录句柄
++     */
++    async function displayItemDetails(cardId, itemType, itemName, handle) {
++      const panel = document.getElementById('detailsPanel');
++      if (!panel) return;
++
++      // 更新标题
++      const titleElement = panel.querySelector('.details-title');
++      const subtitleElement = panel.querySelector('.details-subtitle');
++
++      titleElement.textContent = itemName;
++      subtitleElement.textContent = itemType === 'file' ? '文件' : '目录';
++
++      // 更新内容区域
++      const bodyElement = panel.querySelector('.details-body');
++      bodyElement.innerHTML = '';
++
++      // 构建完整路径
++      const path = await buildItemPath(cardId, itemName);
++
++      // 创建路径显示区域
++      const pathElement = document.createElement('div');
++      pathElement.className = 'details-path';
++      pathElement.textContent = path;
++      bodyElement.appendChild(pathElement);
++
++      // 创建信息区域
++      const infoElement = document.createElement('div');
++      infoElement.className = 'details-info';
++
++      // 添加基本信息
++      const infoItems = [
++        { label: '名称', value: itemName },
++        { label: '类型', value: itemType === 'file' ? '文件' : '目录' }
++      ];
++
++      if (itemType === 'file' && handle) {
++        try {
++          const file = await handle.getFile();
++
++          // 添加文件特定信息
++          infoItems.push(
++            { label: '大小', value: formatFileSize(file.size) },
++            { label: '修改时间', value: new Date(file.lastModified).toLocaleString() },
++            { label: '类型', value: file.type || '未知' }
++          );
++        } catch (error) {
++          console.error('获取文件信息失败', error);
++        }
++      }
++
++      // 添加信息项
++      infoItems.forEach(item => {
++        const infoItemElement = document.createElement('div');
++        infoItemElement.className = 'details-info-item';
++
++        const labelElement = document.createElement('div');
++        labelElement.className = 'details-info-label';
++        labelElement.textContent = item.label + ':';
++
++        const valueElement = document.createElement('div');
++        valueElement.className = 'details-info-value';
++        valueElement.textContent = item.value;
++
++        infoItemElement.appendChild(labelElement);
++        infoItemElement.appendChild(valueElement);
++
++        infoElement.appendChild(infoItemElement);
++      });
++
++      bodyElement.appendChild(infoElement);
++
++      // 如果是文件，显示内容预览
++      if (itemType === 'file' && handle) {
++        await displayFileContent(handle, bodyElement);
++      }
++    }
++
++    /**
++     * @function buildItemPath
++     * @description 构建项目的完整路径
++     * @param {string} cardId 卡片ID
++     * @param {string} itemName 项目名称
++     * @returns {string} 完整路径
++     */
++    async function buildItemPath(cardId, itemName) {
++      // 获取卡片目录路径
++      let path = '';
++      let currentCardId = cardId;
++
++      // 构建从当前卡片到根的路径
++      while (currentCardId) {
++        const dirHandle = openedDirectories.get(currentCardId);
++        if (dirHandle) {
++          path = dirHandle.name + '/' + path;
++        }
++
++        // 获取父卡片ID
++        currentCardId = directoryRelationships.get(currentCardId);
++      }
++
++      // 添加项目名称
++      return path + itemName;
++    }
++
++    /**
++     * @function displayFileContent
++     * @description 显示文件内容预览
++     * @param {FileSystemFileHandle} fileHandle 文件句柄
++     * @param {HTMLElement} container 容器元素
++     */
++    async function displayFileContent(fileHandle, container) {
++      try {
++        const file = await fileHandle.getFile();
++
++        // 创建内容预览标题
++        const contentTitle = document.createElement('h4');
++        contentTitle.textContent = '内容预览';
++        container.appendChild(contentTitle);
++
++        // 创建内容容器
++        const contentElement = document.createElement('div');
++        contentElement.className = 'details-content';
++
++        // 根据文件类型显示不同内容
++        if (file.type.startsWith('image/')) {
++          // 显示图片预览
++          const img = document.createElement('img');
++          img.className = 'content-image';
++          img.src = URL.createObjectURL(file);
++          img.alt = file.name;
++          contentElement.appendChild(img);
++        } else if (
++          file.type.startsWith('text/') ||
++          file.name.endsWith('.js') ||
++          file.name.endsWith('.css') ||
++          file.name.endsWith('.html') ||
++          file.name.endsWith('.json') ||
++          file.name.endsWith('.md') ||
++          file.name.endsWith('.txt')
++        ) {
++          // 显示文本内容
++          try {
++            const text = await file.text();
++            contentElement.textContent = text.length > 10000
++              ? text.substring(0, 10000) + '...\n(文件过大，仅显示部分内容)'
++              : text;
++          } catch (error) {
++            contentElement.textContent = `读取文件内容失败: ${error.message}`;
++          }
++        } else {
++          // 二进制文件提示
++          const binaryNotice = document.createElement('div');
++          binaryNotice.className = 'binary-file-notice';
++          binaryNotice.textContent = '二进制文件，无法显示内容预览';
++          contentElement.appendChild(binaryNotice);
++        }
++
++        container.appendChild(contentElement);
++      } catch (error) {
++        console.error('显示文件内容失败', error);
++        const errorElement = document.createElement('div');
++        errorElement.className = 'binary-file-notice';
++        errorElement.textContent = `显示文件内容失败: ${error.message}`;
++        container.appendChild(errorElement);
++      }
++    }
++
++    /**
++     * @function formatFileSize
++     * @description 格式化文件大小
++     * @param {number} bytes 文件大小（字节）
++     * @returns {string} 格式化后的大小
++     */
++    function formatFileSize(bytes) {
++      if (bytes === 0) return '0 Bytes';
++
++      const k = 1024;
++      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
++      const i = Math.floor(Math.log(bytes) / Math.log(k));
++
++      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
++    }
++
++    /**
++     * @function highlightSelectedItem
++     * @description 高亮显示选中的项目
++     * @param {string} cardId 卡片ID
++     * @param {string} itemType 项目类型 ('file' 或 'directory')
++     * @param {string} itemName 项目名称
++     */
++    function highlightSelectedItem(cardId, itemType, itemName) {
++      // 先移除所有高亮
++      document.querySelectorAll('.file-item.selected, .directory-item.selected').forEach(el => {
++        el.classList.remove('selected');
++      });
++
++      // 获取卡片
++      const card = document.getElementById(cardId);
++      if (!card) return;
++
++      // 查找项目元素并添加高亮
++      const contentLeft = card.querySelector('.content-left');
++      if (!contentLeft) return;
++
++      const itemSelector = itemType === 'file' ? '.file-item' : '.directory-item';
++      const items = contentLeft.querySelectorAll(itemSelector);
++
++      items.forEach(item => {
++        // 获取项目名称（移除图标部分）
++        const nameElement = item.querySelector('.item-icon');
++        if (nameElement) {
++          const name = item.textContent.replace(nameElement.textContent, '').trim();
++          if (name === itemName) {
++            item.classList.add('selected');
++          }
++        }
++      });
++    }
++
+     // 初始化收起全部按钮
+     addCollapseAllButton();
+
+@@ -1012,6 +1385,97 @@
+     addDirectoryButton.addEventListener('click', handleDirectorySelectionAndDisplay);
+     clearAllButton.addEventListener('click', clearAllCards);
+     saveChangesButton.addEventListener('click', handleSaveFileChanges);
++
++    // 以下修改selectItem和handleFileReadAsText函数
++
++    // 保存原始函数的引用
++    const originalSelectItem = selectItem;
++    const originalHandleFileReadAsText = handleFileReadAsText;
++
++    // 增强selectItem函数
++    selectItem = async function(cardId, itemType, itemName) {
++      // 调用原始函数
++      originalSelectItem(cardId, itemType, itemName);
++
++      // 高亮选中项
++      highlightSelectedItem(cardId, itemType, itemName);
++
++      // 获取目录句柄
++      const dirHandle = openedDirectories.get(cardId);
++      if (!dirHandle) return;
++
++      // 获取文件或目录句柄
++      try {
++        let handle = null;
++        if (itemType === 'file') {
++          handle = await dirHandle.getFileHandle(itemName, { create: false });
++        } else {
++          handle = await dirHandle.getDirectoryHandle(itemName, { create: false });
++        }
++
++        // 显示详情
++        displayItemDetails(cardId, itemType, itemName, handle);
++      } catch (error) {
++        console.error('获取句柄失败', error);
++      }
++    };
++
++    // 增强handleFileReadAsText函数
++    handleFileReadAsText = async function(fileHandle) {
++      // 调用原始函数
++      await originalHandleFileReadAsText(fileHandle);
++
++      // 查找父卡片ID
++      let parentCardId = null;
++      for (const [cardId, dirHandle] of openedDirectories.entries()) {
++        try {
++          // 检查文件是否在此目录中
++          await dirHandle.getFileHandle(fileHandle.name, { create: false });
++          parentCardId = cardId;
++          break;
++        } catch (error) {
++          // 文件不在此目录中，继续查找
++          continue;
++        }
++      }
++
++      if (parentCardId) {
++        // 高亮选中项
++        highlightSelectedItem(parentCardId, 'file', fileHandle.name);
++
++        // 显示详情
++        displayItemDetails(parentCardId, 'file', fileHandle.name, fileHandle);
++      }
++    };
++
++    // 在文档加载完成后初始化分割视图
++    document.addEventListener('DOMContentLoaded', function() {
++      // 重构主内容区域
++      restructureMainContent();
++
++      console.log('分割视图与详情面板功能已初始化');
++    });
+
+     // 初始化调试面板
+     updateDebugPanel();
