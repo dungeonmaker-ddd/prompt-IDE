@@ -1,0 +1,1764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeStructure>
+  <functions>
+    <function name="updateDebugPanel" type="function">
+      <params></params>
+      <location>
+        <startLine>523</startLine>
+        <startColumn>5</startColumn>
+        <endLine>580</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>updateDebugPanel</paramName>
+          </tag>
+          <tag name="description">
+            <description>更新调试面板的内容，显示原始数据结构</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 转换 Map 和 Set 为对象和数组以便更好地展示
+      /...</bodyPreview>
+    </function>
+    <function name="getExistingCardId" type="function">
+      <params>dirHandle</params>
+      <location>
+        <startLine>582</startLine>
+        <startColumn>5</startColumn>
+        <endLine>610</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>isDirectoryAlreadyOpen</paramName>
+            <description>@description 检查目录是否已经打开 @param {FileSystemDirectoryHandle} dirHandle 目录句柄 @returns {boolean} 目录是否已经打开 /     async function isDirectoryAlreadyOpen(dirHandle) {       // 尝试获取唯一标识符       try {         // 使用目录名称作为简单的标识符         // 在实际应用中可能需要更复杂的逻辑来确定唯一性         const path = dirHandle.name;         return dirHandleMap.has(path);       } catch (error) {         console.error(&apos;检查目录是否已打开时出错&apos;, error);         return false;       }     }     /**</description>
+          </tag>
+          <tag name="function">
+            <paramName>getExistingCardId</paramName>
+            <description>@description 获取已打开目录的卡片ID @param {FileSystemDirectoryHandle} dirHandle 目录句柄</description>
+          </tag>
+          <tag name="returns">
+            <type>string|null</type>
+            <description>卡片ID，如果未打开则返回null</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      const path = dirHandle.name;
+      re...</bodyPreview>
+    </function>
+    <function name="isDirectoryAlreadyOpen" type="function">
+      <params>dirHandle</params>
+      <location>
+        <startLine>588</startLine>
+        <startColumn>11</startColumn>
+        <endLine>599</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      // 尝试获取唯一标识符
+      try {
+        // ...</bodyPreview>
+    </function>
+    <function name="createRootContainer" type="function">
+      <params></params>
+      <location>
+        <startLine>612</startLine>
+        <startColumn>5</startColumn>
+        <endLine>627</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>createRootContainer</paramName>
+            <description>@description 创建根目录容器</description>
+          </tag>
+          <tag name="returns">
+            <type>string</type>
+            <description>容器ID</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      const containerId = `root_container_${...</bodyPreview>
+    </function>
+    <function name="createDirectoryCard" type="function">
+      <params>directoryName, dirHandle, parentCardId = null, containerID = null</params>
+      <location>
+        <startLine>629</startLine>
+        <startColumn>5</startColumn>
+        <endLine>784</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>createDirectoryCard</paramName>
+            <description>@description 创建目录卡片 @param {string} directoryName 目录名称 @param {FileSystemDirectoryHandle} dirHandle 目录句柄 @param {string|null} parentCardId 父卡片ID @param {string|null} containerID 容器ID</description>
+          </tag>
+          <tag name="returns">
+            <type>HTMLElement</type>
+            <description>创建的卡片元素</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 生成唯一卡片ID
+      const cardId = `car...</bodyPreview>
+    </function>
+    <function name="findRootContainer" type="function">
+      <params>cardId</params>
+      <location>
+        <startLine>786</startLine>
+        <startColumn>5</startColumn>
+        <endLine>798</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>findRootContainer</paramName>
+            <description>@description 查找卡片所属的根容器 @param {string} cardId 卡片ID</description>
+          </tag>
+          <tag name="returns">
+            <type>string</type>
+            <description>根容器ID</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 如果是根卡片，直接返回其父容器
+      const card =...</bodyPreview>
+    </function>
+    <function name="closeCard" type="function">
+      <params>cardId</params>
+      <location>
+        <startLine>800</startLine>
+        <startColumn>5</startColumn>
+        <endLine>853</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>closeCard</paramName>
+            <description>@description 关闭卡片及其所有子卡片</description>
+          </tag>
+          <tag name="param">
+            <type>string</type>
+            <paramName>cardId</paramName>
+            <description>要关闭的卡片ID</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 查找所有子卡片
+      const childCardIds =...</bodyPreview>
+    </function>
+    <function name="clearAllCards" type="function">
+      <params></params>
+      <location>
+        <startLine>855</startLine>
+        <startColumn>5</startColumn>
+        <endLine>887</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>clearAllCards</paramName>
+          </tag>
+          <tag name="description">
+            <description>清空所有卡片</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 复制根目录ID集合，因为在循环中会修改集合
+      const ...</bodyPreview>
+    </function>
+    <function name="selectItem" type="function">
+      <params>cardId, itemType, itemName</params>
+      <location>
+        <startLine>889</startLine>
+        <startColumn>5</startColumn>
+        <endLine>919</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>selectItem</paramName>
+            <description>@description 选中项目并添加到右侧面板 @param {string} cardId 卡片ID @param {string} itemType 项目类型 (&apos;file&apos; 或 &apos;directory&apos;)</description>
+          </tag>
+          <tag name="param">
+            <type>string</type>
+            <paramName>itemName</paramName>
+            <description>项目名称</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 获取选中项集合
+      if (!selectedItemsPe...</bodyPreview>
+    </function>
+    <function name="removeSelectedItem" type="function">
+      <params>cardId, itemId</params>
+      <location>
+        <startLine>921</startLine>
+        <startColumn>5</startColumn>
+        <endLine>940</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>removeSelectedItem</paramName>
+            <description>@description 从选中项中移除 @param {string} cardId 卡片ID</description>
+          </tag>
+          <tag name="param">
+            <type>string</type>
+            <paramName>itemId</paramName>
+            <description>项目ID</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 获取选中项集合
+      const selectedItems ...</bodyPreview>
+    </function>
+    <function name="updateSelectedItemsPanel" type="function">
+      <params>cardId</params>
+      <location>
+        <startLine>942</startLine>
+        <startColumn>5</startColumn>
+        <endLine>996</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>updateSelectedItemsPanel</paramName>
+            <description>@description 更新卡片右侧的已选中项面板</description>
+          </tag>
+          <tag name="param">
+            <type>string</type>
+            <paramName>cardId</paramName>
+            <description>卡片ID</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      const card = document.getElementById(c...</bodyPreview>
+    </function>
+    <function name="showStatusMessage" type="function">
+      <params>message, isError = false</params>
+      <location>
+        <startLine>998</startLine>
+        <startColumn>5</startColumn>
+        <endLine>1124</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>fillCardWithDirectoryContents</paramName>
+            <description>@description 填充卡片内容区域 @param {HTMLElement} contentLeft 左侧内容元素 @param {HTMLElement} cardInfo 卡片信息元素 @param {FileSystemDirectoryHandle} dirHandle 目录句柄 @param {string} cardId 卡片ID</description>
+          </tag>
+          <tag name="async">
+            <description>/     async function fillCardWithDirectoryContents(contentLeft, cardInfo, dirHandle, cardId) {       try {         // 清空卡片内容         contentLeft.innerHTML = &apos;&apos;;         let fileCount = 0;         let dirCount = 0;         // 遍历目录内容         for await (const entry of dirHandle.values()) {           const entryElement = document.createElement(&apos;div&apos;);           if (entry.kind === &apos;directory&apos;) {             dirCount++;             entryElement.className = &apos;directory-item&apos;;             entryElement.innerHTML = `&lt;span class=&quot;item-icon&quot;&gt;📁&lt;/span&gt; ${entry.name}`;             // 添加点击事件（左键）             entryElement.addEventListener(&apos;click&apos;, () =&gt; handleDirectoryClick(entry, cardId));             // 添加右键事件             entryElement.addEventListener(&apos;contextmenu&apos;, (event) =&gt; {               event.preventDefault(); // 阻止默认右键菜单               selectItem(cardId, &apos;directory&apos;, entry.name);             });           } else {             fileCount++;             entryElement.className = &apos;file-item&apos;;             entryElement.innerHTML = `&lt;span class=&quot;item-icon&quot;&gt;📄&lt;/span&gt; ${entry.name}`;             // 添加点击事件（左键）             entryElement.addEventListener(&apos;click&apos;, () =&gt; handleFileReadAsText(entry));             // 添加右键事件             entryElement.addEventListener(&apos;contextmenu&apos;, (event) =&gt; {               event.preventDefault(); // 阻止默认右键菜单               selectItem(cardId, &apos;file&apos;, entry.name);             });           }           contentLeft.appendChild(entryElement);         }         // 更新卡片信息         cardInfo.textContent = `${dirCount} 个目录, ${fileCount} 个文件`;       } catch (error) {         contentLeft.innerHTML = `&lt;div class=&quot;error&quot;&gt;加载失败: ${error.message}&lt;/div&gt;`;         cardInfo.textContent = &apos;加载失败&apos;;         console.error(&apos;[DEBUG] 目录内容加载失败&apos;, error);       }     }     /**</description>
+          </tag>
+          <tag name="function">
+            <paramName>handleDirectorySelectionAndDisplay</paramName>
+            <description>@description 处理用户选择目录并展示其内容</description>
+          </tag>
+          <tag name="async">
+            <description>/     async function handleDirectorySelectionAndDisplay() {       try {         // 请求读写权限以支持编辑操作         const dirHandle = await window.showDirectoryPicker({           mode: &apos;readwrite&apos; // 需要读写权限         });         // 检查目录是否已经打开         if (await isDirectoryAlreadyOpen(dirHandle)) {           const existingCardId = getExistingCardId(dirHandle);           if (existingCardId) {             const card = document.getElementById(existingCardId);             if (card) {               // 已打开目录，滚动到该卡片               card.scrollIntoView({ behavior: &apos;smooth&apos; });               showStatusMessage(`目录 ${dirHandle.name} 已经打开`);               return;             }           }         }         // 创建新的根容器         const containerId = createRootContainer();         // 创建根目录卡片         const rootCard = createDirectoryCard(dirHandle.name, dirHandle, null, containerId);         // 显示状态消息         showStatusMessage(`成功添加目录: ${dirHandle.name}`);       } catch (error) {         console.error(&apos;[DEBUG] 目录选择失败&apos;, error);         showStatusMessage(`选择目录失败: ${error.message}`, true);       }     }     /**</description>
+          </tag>
+          <tag name="function">
+            <paramName>showStatusMessage</paramName>
+            <description>@description 显示状态消息 @param {string} message 消息内容</description>
+          </tag>
+          <tag name="param">
+            <type>boolean</type>
+            <paramName>isError</paramName>
+            <description>是否为错误消息</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 创建或获取状态消息元素
+      let statusMessag...</bodyPreview>
+    </function>
+    <function name="fillCardWithDirectoryContents" type="function">
+      <params>contentLeft, cardInfo, dirHandle, cardId</params>
+      <location>
+        <startLine>1007</startLine>
+        <startColumn>11</startColumn>
+        <endLine>1057</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      try {
+        // 清空卡片内容
+        cont...</bodyPreview>
+    </function>
+    <function name="handleDirectorySelectionAndDisplay" type="function">
+      <params></params>
+      <location>
+        <startLine>1064</startLine>
+        <startColumn>11</startColumn>
+        <endLine>1097</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      try {
+        // 请求读写权限以支持编辑操作
+     ...</bodyPreview>
+    </function>
+    <function name="createConnectorLines" type="function">
+      <params>parentCard, childCard</params>
+      <location>
+        <startLine>1126</startLine>
+        <startColumn>5</startColumn>
+        <endLine>1192</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>createConnectorLines</paramName>
+            <description>@description 创建连接父卡片和子卡片的连接线 @param {HTMLElement} parentCard 父卡片元素</description>
+          </tag>
+          <tag name="param">
+            <type>HTMLElement</type>
+            <paramName>childCard</paramName>
+            <description>子卡片元素</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      const parentRect = parentCard.getBound...</bodyPreview>
+    </function>
+    <function name="toggleCardCollapse" type="function">
+      <params>card</params>
+      <location>
+        <startLine>1194</startLine>
+        <startColumn>5</startColumn>
+        <endLine>1348</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>handleDirectoryClick</paramName>
+            <description>@description 处理目录点击，打开子目录 @param {FileSystemDirectoryHandle} dirHandle 目录句柄 @param {string} parentCardId 父卡片ID</description>
+          </tag>
+          <tag name="async">
+            <description>/     async function handleDirectoryClick(dirHandle, parentCardId) {       try {         // 检查目录是否已经打开         if (await isDirectoryAlreadyOpen(dirHandle)) {           const existingCardId = getExistingCardId(dirHandle);           if (existingCardId) {             const card = document.getElementById(existingCardId);             if (card) {               // 已打开目录，滚动到该卡片               card.scrollIntoView({ behavior: &apos;smooth&apos; });               showStatusMessage(`目录 ${dirHandle.name} 已经打开`);               return;             }           }         }         // 获取父卡片和容器         const parentCard = document.getElementById(parentCardId);         if (!parentCard) {           throw new Error(&apos;找不到父卡片&apos;);         }         const containerID = findRootContainer(parentCardId);         // 创建新的目录卡片         const directoryCard = createDirectoryCard(dirHandle.name, dirHandle, parentCardId, containerID);         // 创建连接线         setTimeout(() =&gt; {           createConnectorLines(parentCard, directoryCard);         }, 10);         // 滚动到新卡片位置         directoryCard.scrollIntoView({ behavior: &apos;smooth&apos; });       } catch (error) {         console.error(&apos;[DEBUG] 打开子目录失败&apos;, error);         showStatusMessage(`打开目录失败: ${error.message}`, true);       }     }     /**</description>
+          </tag>
+          <tag name="function">
+            <paramName>handleFileReadAsText</paramName>
+            <description>@description 将文件作为文本读取并显示 @param {FileSystemFileHandle} fileHandle 文件句柄</description>
+          </tag>
+          <tag name="async">
+            <description>/     async function handleFileReadAsText(fileHandle) {       try {         const file = await fileHandle.getFile();         const textContent = await file.text();         fileContentEditor.value = textContent;         fileContentEditor.disabled = false;         saveChangesButton.disabled = false;         currentFileHandle = fileHandle;         // 添加当前正在编辑的文件信息         const editorLabel = document.createElement(&apos;div&apos;);         editorLabel.textContent = `正在编辑: ${fileHandle.name}`;         // 如果已经有标签，则替换它         const existingLabel = document.querySelector(&apos;.editor-label&apos;);         if (existingLabel) {           existingLabel.remove();         }         editorLabel.className = &apos;editor-label&apos;;         document.querySelector(&apos;.editor-container&apos;).insertBefore(editorLabel, fileContentEditor);         // 滚动到编辑器位置         fileContentEditor.scrollIntoView({ behavior: &apos;smooth&apos; });         // 显示状态消息         showStatusMessage(`已加载文件: ${fileHandle.name}`);         // 更新调试面板         updateDebugPanel();       } catch (error) {         console.error(&apos;[DEBUG] 文件读取失败&apos;, error);         showStatusMessage(`读取文件失败: ${error.message}`, true);       }     }     /**</description>
+          </tag>
+          <tag name="function">
+            <paramName>toggleCardCollapse</paramName>
+            <description>@description 切换卡片的收起/展开状态</description>
+          </tag>
+          <tag name="param">
+            <type>HTMLElement</type>
+            <paramName>card</paramName>
+            <description>要切换的卡片元素</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      const wasCollapsed = card.classList.co...</bodyPreview>
+    </function>
+    <function name="handleDirectoryClick" type="function">
+      <params>dirHandle, parentCardId</params>
+      <location>
+        <startLine>1201</startLine>
+        <startColumn>11</startColumn>
+        <endLine>1239</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      try {
+        // 检查目录是否已经打开
+        ...</bodyPreview>
+    </function>
+    <function name="handleFileReadAsText" type="function">
+      <params>fileHandle</params>
+      <location>
+        <startLine>1247</startLine>
+        <startColumn>11</startColumn>
+        <endLine>1282</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      try {
+        const file = await file...</bodyPreview>
+    </function>
+    <function name="updateConnectors" type="function">
+      <params></params>
+      <location>
+        <startLine>1350</startLine>
+        <startColumn>5</startColumn>
+        <endLine>1367</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <comment>
+        <tags>
+          <tag name="function">
+            <paramName>updateConnectors</paramName>
+          </tag>
+          <tag name="description">
+            <description>更新所有连接线位置</description>
+          </tag>
+        </tags>
+      </comment>
+      <bodyPreview>{
+      // 移除所有连接线
+      const connectors = d...</bodyPreview>
+    </function>
+    <function name="handleSaveFileChanges" type="function">
+      <params></params>
+      <location>
+        <startLine>1374</startLine>
+        <startColumn>11</startColumn>
+        <endLine>1390</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      if (!currentFileHandle) {
+        sho...</bodyPreview>
+    </function>
+    <function name="addCollapseAllButton" type="function">
+      <params></params>
+      <location>
+        <startLine>1396</startLine>
+        <startColumn>5</startColumn>
+        <endLine>1435</endLine>
+        <endColumn>5</endColumn>
+      </location>
+      <bodyPreview>{
+      const collapseAllButton = document.cre...</bodyPreview>
+    </function>
+    <function name="toggleAllCards" type="function">
+      <params></params>
+      <location>
+        <startLine>1402</startLine>
+        <startColumn>7</startColumn>
+        <endLine>1431</endLine>
+        <endColumn>7</endColumn>
+      </location>
+      <bodyPreview>{
+        const allCards = document.querySelec...</bodyPreview>
+    </function>
+  </functions>
+  <cssRules>
+    <rule selector="body">
+      <location>
+        <startLine>7</startLine>
+        <startColumn>5</startColumn>
+        <endLine>15</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>基本样式</comment>
+    </rule>
+    <rule selector=".debug-panel">
+      <location>
+        <startLine>17</startLine>
+        <startColumn>5</startColumn>
+        <endLine>28</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>左侧调试面板</comment>
+    </rule>
+    <rule selector=".main-content">
+      <location>
+        <startLine>77</startLine>
+        <startColumn>5</startColumn>
+        <endLine>84</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>主内容区域</comment>
+    </rule>
+    <rule selector=".controls">
+      <location>
+        <startLine>86</startLine>
+        <startColumn>5</startColumn>
+        <endLine>92</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>控制区域</comment>
+    </rule>
+    <rule selector=".board-container">
+      <location>
+        <startLine>112</startLine>
+        <startColumn>5</startColumn>
+        <endLine>124</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>布局容器 - 电路板风格</comment>
+    </rule>
+    <rule selector=".root-directory-container">
+      <location>
+        <startLine>126</startLine>
+        <startColumn>5</startColumn>
+        <endLine>132</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>根目录区域</comment>
+    </rule>
+    <rule selector=".directory-card">
+      <location>
+        <startLine>134</startLine>
+        <startColumn>5</startColumn>
+        <endLine>146</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>目录卡片样式</comment>
+    </rule>
+    <rule selector=".card-content">
+      <location>
+        <startLine>148</startLine>
+        <startColumn>5</startColumn>
+        <endLine>152</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>卡片内容区域平滑过渡效果</comment>
+    </rule>
+    <rule selector=".directory-card.card-collapsed .card-content">
+      <location>
+        <startLine>154</startLine>
+        <startColumn>5</startColumn>
+        <endLine>161</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>收起状态的卡片内容样式</comment>
+    </rule>
+    <rule selector=".directory-card.card-collapsed .card-header">
+      <location>
+        <startLine>163</startLine>
+        <startColumn>5</startColumn>
+        <endLine>166</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>收起状态下标题栏底部边框隐藏</comment>
+    </rule>
+    <rule selector=".directory-card.card-collapsed">
+      <location>
+        <startLine>168</startLine>
+        <startColumn>5</startColumn>
+        <endLine>173</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>收起状态的卡片样式</comment>
+    </rule>
+    <rule selector=".directory-card.root">
+      <location>
+        <startLine>175</startLine>
+        <startColumn>5</startColumn>
+        <endLine>178</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>根目录卡片</comment>
+    </rule>
+    <rule selector=".card-connector">
+      <location>
+        <startLine>180</startLine>
+        <startColumn>5</startColumn>
+        <endLine>185</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>卡片连接线</comment>
+    </rule>
+    <rule selector=".connector-node">
+      <location>
+        <startLine>197</startLine>
+        <startColumn>5</startColumn>
+        <endLine>205</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>卡片节点点</comment>
+    </rule>
+    <rule selector=".card-actions">
+      <location>
+        <startLine>237</startLine>
+        <startColumn>5</startColumn>
+        <endLine>241</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>卡片操作按钮</comment>
+    </rule>
+    <rule selector=".card-content">
+      <location>
+        <startLine>263</startLine>
+        <startColumn>5</startColumn>
+        <endLine>267</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>分栏布局</comment>
+    </rule>
+    <rule selector=".file-item, .directory-item">
+      <location>
+        <startLine>289</startLine>
+        <startColumn>5</startColumn>
+        <endLine>296</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>文件项样式</comment>
+    </rule>
+    <rule selector=".selected-item">
+      <location>
+        <startLine>311</startLine>
+        <startColumn>5</startColumn>
+        <endLine>319</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>选中项样式</comment>
+    </rule>
+    <rule selector=".editor-container">
+      <location>
+        <startLine>353</startLine>
+        <startColumn>5</startColumn>
+        <endLine>360</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>文件编辑区域</comment>
+    </rule>
+    <rule selector=".status-message">
+      <location>
+        <startLine>378</startLine>
+        <startColumn>5</startColumn>
+        <endLine>385</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>状态消息</comment>
+    </rule>
+    <rule selector=".context-menu">
+      <location>
+        <startLine>387</startLine>
+        <startColumn>5</startColumn>
+        <endLine>396</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>右键菜单</comment>
+    </rule>
+    <rule selector="@media (max-width: 1200px)">
+      <location>
+        <startLine>407</startLine>
+        <startColumn>5</startColumn>
+        <endLine>422</endLine>
+        <endColumn>6</endColumn>
+      </location>
+      <comment>响应式设计</comment>
+    </rule>
+    <rule selector="/* 基本样式 */
+    body">
+      <location>
+        <startLine>6</startLine>
+        <startColumn>10</startColumn>
+        <endLine>15</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      background-color: #f5f5f5;
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* 左侧调试面板 */
+    .debug-panel">
+      <location>
+        <startLine>8</startLine>
+        <startColumn>11</startColumn>
+        <endLine>28</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="width: 280px;
+      background-color: #263238;
+      color: #fff;
+      padding: 15px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+    
+    .debug-panel h2">
+      <location>
+        <startLine>18</startLine>
+        <startColumn>19</startColumn>
+        <endLine>35</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="font-size: 18px;
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #455A64;
+    }
+    
+    .debug-section">
+      <location>
+        <startLine>30</startLine>
+        <startColumn>22</startColumn>
+        <endLine>39</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-bottom: 20px;
+    }
+    
+    .debug-section h3">
+      <location>
+        <startLine>37</startLine>
+        <startColumn>21</startColumn>
+        <endLine>49</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="font-size: 14px;
+      color: #81D4FA;
+      margin-top: 0;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .debug-content">
+      <location>
+        <startLine>41</startLine>
+        <startColumn>24</startColumn>
+        <endLine>62</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background-color: #1E272C;
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #A5D6A7;
+    }
+    
+    .debug-content.json">
+      <location>
+        <startLine>51</startLine>
+        <startColumn>21</startColumn>
+        <endLine>66</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="color: #FFD54F;
+    }
+    
+    .debug-count">
+      <location>
+        <startLine>64</startLine>
+        <startColumn>26</startColumn>
+        <endLine>75</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #455A64;
+      color: white;
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-size: 11px;
+      margin-left: 5px;
+    }
+    
+    /* 主内容区域 */
+    .main-content">
+      <location>
+        <startLine>68</startLine>
+        <startColumn>19</startColumn>
+        <endLine>84</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="flex-grow: 1;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    
+    /* 控制区域 */
+    .controls">
+      <location>
+        <startLine>78</startLine>
+        <startColumn>20</startColumn>
+        <endLine>92</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    button">
+      <location>
+        <startLine>87</startLine>
+        <startColumn>16</startColumn>
+        <endLine>101</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button.danger">
+      <location>
+        <startLine>94</startLine>
+        <startColumn>13</startColumn>
+        <endLine>105</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #f44336;
+    }
+    
+    button:disabled">
+      <location>
+        <startLine>103</startLine>
+        <startColumn>20</startColumn>
+        <endLine>110</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    /* 布局容器 - 电路板风格 */
+    .board-container">
+      <location>
+        <startLine>107</startLine>
+        <startColumn>22</startColumn>
+        <endLine>124</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      min-height: 400px;
+    }
+    
+    /* 根目录区域 */
+    .root-directory-container">
+      <location>
+        <startLine>113</startLine>
+        <startColumn>23</startColumn>
+        <endLine>132</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+    
+    /* 目录卡片样式 */
+    .directory-card">
+      <location>
+        <startLine>127</startLine>
+        <startColumn>32</startColumn>
+        <endLine>146</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="position: relative;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      width: 600px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: white;
+      margin-left: 30px;
+      z-index: 2;
+      transition: box-shadow 0.3s, border-radius 0.3s;
+    }
+
+    /* 卡片内容区域平滑过渡效果 */
+    .card-content">
+      <location>
+        <startLine>135</startLine>
+        <startColumn>22</startColumn>
+        <endLine>152</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="transition: height 0.3s ease-out, opacity 0.3s ease-out;
+      overflow: hidden;
+    }
+
+    /* 收起状态的卡片内容样式 */
+    .directory-card.card-collapsed .card-content">
+      <location>
+        <startLine>149</startLine>
+        <startColumn>20</startColumn>
+        <endLine>161</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="height: 0 !important;
+      opacity: 0;
+      padding: 0;
+      margin: 0;
+      border: none;
+    }
+
+    /* 收起状态下标题栏底部边框隐藏 */
+    .directory-card.card-collapsed .card-header">
+      <location>
+        <startLine>155</startLine>
+        <startColumn>51</startColumn>
+        <endLine>166</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="border-bottom: none;
+    }
+
+    /* 收起状态的卡片样式 */
+    .directory-card.card-collapsed">
+      <location>
+        <startLine>164</startLine>
+        <startColumn>50</startColumn>
+        <endLine>173</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    /* 根目录卡片 */
+    .directory-card.root">
+      <location>
+        <startLine>169</startLine>
+        <startColumn>37</startColumn>
+        <endLine>178</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-left: 0;
+    }
+    
+    /* 卡片连接线 */
+    .card-connector">
+      <location>
+        <startLine>176</startLine>
+        <startColumn>27</startColumn>
+        <endLine>185</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="position: absolute;
+      border: 2px solid #4285f4;
+      z-index: 1;
+    }
+    
+    .connector-horizontal">
+      <location>
+        <startLine>181</startLine>
+        <startColumn>22</startColumn>
+        <endLine>190</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="height: 2px;
+      background-color: #4285f4;
+    }
+    
+    .connector-vertical">
+      <location>
+        <startLine>187</startLine>
+        <startColumn>28</startColumn>
+        <endLine>195</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="width: 2px;
+      background-color: #4285f4;
+    }
+    
+    /* 卡片节点点 */
+    .connector-node">
+      <location>
+        <startLine>192</startLine>
+        <startColumn>26</startColumn>
+        <endLine>205</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #4285f4;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    
+    .card-header">
+      <location>
+        <startLine>198</startLine>
+        <startColumn>22</startColumn>
+        <endLine>215</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #4285f4;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .root .card-header">
+      <location>
+        <startLine>207</startLine>
+        <startColumn>19</startColumn>
+        <endLine>219</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #FF5722;
+    }
+    
+    .card-title-section">
+      <location>
+        <startLine>217</startLine>
+        <startColumn>25</startColumn>
+        <endLine>223</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="flex-grow: 1;
+    }
+    
+    .card-title">
+      <location>
+        <startLine>221</startLine>
+        <startColumn>26</startColumn>
+        <endLine>229</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    .card-info">
+      <location>
+        <startLine>225</startLine>
+        <startColumn>18</startColumn>
+        <endLine>235</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="font-size: 12px;
+      margin-top: 5px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    /* 卡片操作按钮 */
+    .card-actions">
+      <location>
+        <startLine>231</startLine>
+        <startColumn>17</startColumn>
+        <endLine>241</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="display: flex;
+      gap: 5px;
+    }
+    
+    .card-collapse-btn, .card-close-btn">
+      <location>
+        <startLine>238</startLine>
+        <startColumn>20</startColumn>
+        <endLine>257</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: transparent;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .card-collapse-btn:hover, .card-close-btn:hover">
+      <location>
+        <startLine>243</startLine>
+        <startColumn>42</startColumn>
+        <endLine>261</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* 分栏布局 */
+    .card-content">
+      <location>
+        <startLine>259</startLine>
+        <startColumn>54</startColumn>
+        <endLine>267</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="display: flex;
+      height: 300px;
+    }
+    
+    .content-left">
+      <location>
+        <startLine>264</startLine>
+        <startColumn>20</startColumn>
+        <endLine>273</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="flex: 1;
+      border-right: 1px solid #eee;
+      overflow-y: auto;
+    }
+    
+    .content-right">
+      <location>
+        <startLine>269</startLine>
+        <startColumn>20</startColumn>
+        <endLine>279</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="flex: 1;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+    
+    .content-right-header">
+      <location>
+        <startLine>275</startLine>
+        <startColumn>21</startColumn>
+        <endLine>287</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 10px;
+      background-color: #E3F2FD;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+      color: #0D47A1;
+    }
+    
+    /* 文件项样式 */
+    .file-item, .directory-item">
+      <location>
+        <startLine>281</startLine>
+        <startColumn>28</startColumn>
+        <endLine>296</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .file-item:hover, .directory-item:hover">
+      <location>
+        <startLine>290</startLine>
+        <startColumn>34</startColumn>
+        <endLine>300</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #f0f0f0;
+    }
+    
+    .directory-item">
+      <location>
+        <startLine>298</startLine>
+        <startColumn>46</startColumn>
+        <endLine>304</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="color: #4285f4;
+    }
+    
+    .item-icon">
+      <location>
+        <startLine>302</startLine>
+        <startColumn>22</startColumn>
+        <endLine>309</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-right: 8px;
+      font-size: 16px;
+    }
+    
+    /* 选中项样式 */
+    .selected-item">
+      <location>
+        <startLine>306</startLine>
+        <startColumn>17</startColumn>
+        <endLine>319</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 10px;
+      border-bottom: 1px solid #e0e0e0;
+      background-color: #E8F5E9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .selected-item .item-name">
+      <location>
+        <startLine>312</startLine>
+        <startColumn>21</startColumn>
+        <endLine>324</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="display: flex;
+      align-items: center;
+    }
+    
+    .remove-item">
+      <location>
+        <startLine>321</startLine>
+        <startColumn>32</startColumn>
+        <endLine>340</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: transparent;
+      color: #f44336;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-size: 16px;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .remove-item:hover">
+      <location>
+        <startLine>326</startLine>
+        <startColumn>19</startColumn>
+        <endLine>344</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: rgba(244, 67, 54, 0.1);
+    }
+    
+    .empty-selection">
+      <location>
+        <startLine>342</startLine>
+        <startColumn>25</startColumn>
+        <endLine>351</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 20px;
+      color: #757575;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    /* 文件编辑区域 */
+    .editor-container">
+      <location>
+        <startLine>346</startLine>
+        <startColumn>23</startColumn>
+        <endLine>360</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-top: 20px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .editor-label">
+      <location>
+        <startLine>354</startLine>
+        <startColumn>24</startColumn>
+        <endLine>366</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="margin-bottom: 10px;
+      font-weight: bold;
+      color: #4285f4;
+    }
+    
+    textarea">
+      <location>
+        <startLine>362</startLine>
+        <startColumn>20</startColumn>
+        <endLine>376</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="width: 100%;
+      height: 300px;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    
+    /* 状态消息 */
+    .status-message">
+      <location>
+        <startLine>368</startLine>
+        <startColumn>15</startColumn>
+        <endLine>385</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+    
+    /* 右键菜单 */
+    .context-menu">
+      <location>
+        <startLine>379</startLine>
+        <startColumn>22</startColumn>
+        <endLine>396</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="position: absolute;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding: 5px 0;
+      z-index: 1000;
+    }
+    
+    .context-menu-item">
+      <location>
+        <startLine>388</startLine>
+        <startColumn>20</startColumn>
+        <endLine>401</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="padding: 8px 12px;
+      cursor: pointer;
+    }
+    
+    .context-menu-item:hover">
+      <location>
+        <startLine>398</startLine>
+        <startColumn>25</startColumn>
+        <endLine>405</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="background-color: #f0f0f0;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 1200px)">
+      <location>
+        <startLine>403</startLine>
+        <startColumn>31</startColumn>
+        <endLine>422</endLine>
+        <endColumn>6</endColumn>
+      </location>
+    </rule>
+    <rule selector="flex-direction: column;
+      }
+      
+      .debug-panel">
+      <location>
+        <startLine>409</startLine>
+        <startColumn>13</startColumn>
+        <endLine>417</endLine>
+        <endColumn>8</endColumn>
+      </location>
+    </rule>
+    <rule selector="width: 100%;
+        height: auto;
+        max-height: 300px;
+      }
+      
+      .directory-card">
+      <location>
+        <startLine>413</startLine>
+        <startColumn>21</startColumn>
+        <endLine>421</endLine>
+        <endColumn>8</endColumn>
+      </location>
+    </rule>
+  </cssRules>
+  <htmlElements>
+    <element tag="div">
+      <class>debug-panel</class>
+      <location>
+        <startLine>427</startLine>
+        <startColumn>3</startColumn>
+        <endLine>432</endLine>
+        <endColumn>73</endColumn>
+      </location>
+      <comment>左侧调试面板</comment>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>430</startLine>
+        <startColumn>5</startColumn>
+        <endLine>432</endLine>
+        <endColumn>73</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <id>openedDirCount</id>
+      <location>
+        <startLine>431</startLine>
+        <startColumn>29</startColumn>
+        <endLine>431</endLine>
+        <endColumn>83</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>openedDirectoriesDebug</id>
+      <location>
+        <startLine>432</startLine>
+        <startColumn>7</startColumn>
+        <endLine>432</endLine>
+        <endColumn>73</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>435</startLine>
+        <startColumn>5</startColumn>
+        <endLine>437</endLine>
+        <endColumn>69</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <id>relationshipsCount</id>
+      <location>
+        <startLine>436</startLine>
+        <startColumn>34</startColumn>
+        <endLine>436</endLine>
+        <endColumn>92</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>relationshipsDebug</id>
+      <location>
+        <startLine>437</startLine>
+        <startColumn>7</startColumn>
+        <endLine>437</endLine>
+        <endColumn>69</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>440</startLine>
+        <startColumn>5</startColumn>
+        <endLine>442</endLine>
+        <endColumn>71</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <id>rootDirCount</id>
+      <location>
+        <startLine>441</startLine>
+        <startColumn>27</startColumn>
+        <endLine>441</endLine>
+        <endColumn>79</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>rootDirectoriesDebug</id>
+      <location>
+        <startLine>442</startLine>
+        <startColumn>7</startColumn>
+        <endLine>442</endLine>
+        <endColumn>71</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>445</startLine>
+        <startColumn>5</startColumn>
+        <endLine>447</endLine>
+        <endColumn>69</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <id>selectedItemsCount</id>
+      <location>
+        <startLine>446</startLine>
+        <startColumn>25</startColumn>
+        <endLine>446</endLine>
+        <endColumn>83</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>selectedItemsDebug</id>
+      <location>
+        <startLine>447</startLine>
+        <startColumn>7</startColumn>
+        <endLine>447</endLine>
+        <endColumn>69</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>450</startLine>
+        <startColumn>5</startColumn>
+        <endLine>452</endLine>
+        <endColumn>68</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <id>dirHandleMapCount</id>
+      <location>
+        <startLine>451</startLine>
+        <startColumn>24</startColumn>
+        <endLine>451</endLine>
+        <endColumn>81</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>dirHandleMapDebug</id>
+      <location>
+        <startLine>452</startLine>
+        <startColumn>7</startColumn>
+        <endLine>452</endLine>
+        <endColumn>68</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>debug-section</class>
+      <location>
+        <startLine>455</startLine>
+        <startColumn>5</startColumn>
+        <endLine>457</endLine>
+        <endColumn>61</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <id>globalVarsDebug</id>
+      <location>
+        <startLine>457</startLine>
+        <startColumn>7</startColumn>
+        <endLine>457</endLine>
+        <endColumn>61</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>main-content</class>
+      <location>
+        <startLine>462</startLine>
+        <startColumn>3</startColumn>
+        <endLine>467</endLine>
+        <endColumn>11</endColumn>
+      </location>
+      <comment>主内容区域</comment>
+    </element>
+    <element tag="div">
+      <class>controls</class>
+      <location>
+        <startLine>463</startLine>
+        <startColumn>5</startColumn>
+        <endLine>467</endLine>
+        <endColumn>11</endColumn>
+      </location>
+    </element>
+    <element tag="button">
+      <id>addDirectoryButton</id>
+      <location>
+        <startLine>464</startLine>
+        <startColumn>7</startColumn>
+        <endLine>464</endLine>
+        <endColumn>52</endColumn>
+      </location>
+    </element>
+    <element tag="button">
+      <class>danger</class>
+      <location>
+        <startLine>465</startLine>
+        <startColumn>7</startColumn>
+        <endLine>465</endLine>
+        <endColumn>63</endColumn>
+      </location>
+    </element>
+    <element tag="button">
+      <id>saveChangesButton</id>
+      <location>
+        <startLine>466</startLine>
+        <startColumn>7</startColumn>
+        <endLine>466</endLine>
+        <endColumn>60</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>board-container</class>
+      <location>
+        <startLine>469</startLine>
+        <startColumn>5</startColumn>
+        <endLine>471</endLine>
+        <endColumn>11</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>editor-container</class>
+      <location>
+        <startLine>473</startLine>
+        <startColumn>5</startColumn>
+        <endLine>475</endLine>
+        <endColumn>11</endColumn>
+      </location>
+    </element>
+    <element tag="textarea">
+      <id>fileContentEditor</id>
+      <location>
+        <startLine>474</startLine>
+        <startColumn>7</startColumn>
+        <endLine>474</endLine>
+        <endColumn>90</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>item-name</class>
+      <location>
+        <startLine>984</startLine>
+        <startColumn>11</startColumn>
+        <endLine>984</endLine>
+        <endColumn>90</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <class>item-icon</class>
+      <location>
+        <startLine>984</startLine>
+        <startColumn>34</startColumn>
+        <endLine>984</endLine>
+        <endColumn>72</endColumn>
+      </location>
+    </element>
+    <element tag="button">
+      <class>remove-item</class>
+      <location>
+        <startLine>985</startLine>
+        <startColumn>11</startColumn>
+        <endLine>985</endLine>
+        <endColumn>60</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <class>item-icon</class>
+      <location>
+        <startLine>1022</startLine>
+        <startColumn>39</startColumn>
+        <endLine>1022</endLine>
+        <endColumn>72</endColumn>
+      </location>
+    </element>
+    <element tag="span">
+      <class>item-icon</class>
+      <location>
+        <startLine>1035</startLine>
+        <startColumn>39</startColumn>
+        <endLine>1035</endLine>
+        <endColumn>72</endColumn>
+      </location>
+    </element>
+    <element tag="div">
+      <class>error</class>
+      <location>
+        <startLine>1053</startLine>
+        <startColumn>34</startColumn>
+        <endLine>1053</endLine>
+        <endColumn>81</endColumn>
+      </location>
+    </element>
+  </htmlElements>
+</codeStructure>
