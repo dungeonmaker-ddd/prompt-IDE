@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件系统浏览器</title>
+  <style>
+    /* 基本样式 */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 左侧调试面板 */
+    .debug-panel {
+      width: 300px;
+      height: 100vh;
+      background-color: #f5f5f5;
+      border-right: 1px solid #ddd;
+      padding: 10px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .debug-panel h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .debug-section {
+      margin-bottom: 15px;
+    }
+
+    .debug-section h3 {
+      font-size: 1rem;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .debug-content {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 0.8rem;
+      max-height: 150px;
+      overflow-y: auto;
+      word-break: break-all;
+    }
+
+    .debug-content.json {
+      font-family: monospace;
+    }
+
+    .debug-count {
+      background-color: #007bff;
+      color: white;
+      border-radius: 50%;
+      min-width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 主内容区域 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    /* 控制区域 */
+    .controls {
+      margin-bottom: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button.danger {
+      background-color: #dc3545;
+    }
+
+    button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    /* 布局容器 - 电路板风格 */
+    .board-container {
+      flex: 1;
+      position: relative;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 20px;
+      overflow: auto;
+      margin-bottom: 10px;
+      min-height: 200px;
+    }
+
+    /* 根目录区域 */
+    .root-directory-container {
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    /* 目录卡片样式 */
+    .directory-card {
+      border: 1px solid #007bff;
+      border-radius: 6px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      width: 800px;
+      max-width: 100%;
+      position: relative;
+    }
+
+    /* 卡片内容区域平滑过渡效果 */
+    .card-content {
+      display: flex;
+      max-height: 400px;
+      transition: max-height 0.3s ease;
+    }
+
+    /* 收起状态的卡片内容样式 */
+    .directory-card.card-collapsed .card-content {
+      max-height: 0;
+      overflow: hidden;
+      border-top: none;
+      padding: 0;
+    }
+
+    /* 收起状态下标题栏底部边框隐藏 */
+    .directory-card.card-collapsed .card-header {
+      border-bottom: none;
+    }
+
+    /* 收起状态的卡片样式 */
+    .directory-card.card-collapsed {
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* 根目录卡片 */
+    .directory-card.root {
+      margin-bottom: 30px;
+    }
+
+    /* 卡片连接线 */
+    .card-connector {
+      position: absolute;
+      background-color: #007bff;
+    }
+
+    .connector-horizontal {
+      height: 2px;
+    }
+
+    .connector-vertical {
+      width: 2px;
+    }
+
+    /* 卡片节点点 */
+    .connector-node {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #007bff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .root .card-header {
+      background-color: #e9ecef;
+    }
+
+    .card-title-section {
+      display: flex;
+      align-items: center;
+    }
+
+    .card-title {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .card-info {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+
+    /* 卡片操作按钮 */
+    .card-actions {
+      display: flex;
+    }
+
+    .card-collapse-btn, .card-close-btn {
+      background: none;
+      border: none;
+      color: #6c757d;
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      padding: 0;
+      margin-left: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .card-collapse-btn:hover, .card-close-btn:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+
+    .content-left {
+      flex: 1;
+      padding: 15px;
+      border-right: 1px solid #ddd;
+    }
+
+    .content-right {
+      width: 250px;
+      padding: 15px;
+    }
+
+    .content-right-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    /* 文件项样式 */
+    .file-item, .directory-item {
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .file-item:hover, .directory-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .directory-item {
+      color: #007bff;
+    }
+
+    .item-icon {
+      margin-right: 8px;
+    }
+
+    /* 选中项样式 */
+    .selected-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background-color: #f1f8ff;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+
+    .selected-item .item-name {
+      word-break: break-all;
+    }
+
+    .remove-item {
+      border: none;
+      background: none;
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 0.9rem;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+      transition: background-color 0.2s;
+    }
+
+    .remove-item:hover {
+      background-color: rgba(220,53,69,0.1);
+    }
+
+    .empty-selection {
+      color: #6c757d;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* 文件编辑区域 */
+    .editor-container {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      height: 250px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-label {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px;
+      font-family: monospace;
+      outline: none;
+    }
+
+    /* 状态消息 */
+    .status-message {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+    }
+
+    /* 右键菜单 */
+    .context-menu {
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding: 5px 0;
+      z-index: 1000;
+    }
+
+    .context-menu-item {
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
+    .context-menu-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 1200px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .debug-panel {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 左侧调试面板 -->
+<div class="debug-panel">
+  <h2>调试面板</h2>
+  <div class="debug-section">
+    <h3>已打开目录 <span id="openedDirCount" class="debug-count">0</span></h3>
+    <div id="openedDirectoriesDebug" class="debug-content json"></div>
+  </div>
+  <div class="debug-section">
+    <h3>目录关系 <span id="relationshipsCount" class="debug-count">0</span></h3>
+    <div id="relationshipsDebug" class="debug-content json"></div>
+  </div>
+  <div class="debug-section">
+    <h3>根目录 <span id="rootDirCount" class="debug-count">0</span></h3>
+    <div id="rootDirectoriesDebug" class="debug-content json"></div>
+  </div>
+  <div class="debug-section">
+    <h3>已选择项目 <span id="selectedItemsCount" class="debug-count">0</span></h3>
+    <div id="selectedItemsDebug" class="debug-content json"></div>
+  </div>
+  <div class="debug-section">
+    <h3>目录句柄映射 <span id="dirHandleMapCount" class="debug-count">0</span></h3>
+    <div id="dirHandleMapDebug" class="debug-content json"></div>
+  </div>
+  <div class="debug-section">
+    <h3>全局变量</h3>
+    <div id="globalVarsDebug" class="debug-content json"></div>
+  </div>
+</div>
+
+<!-- 主内容区域 -->
+<div class="main-content">
+  <div class="controls">
+    <button id="addDirectoryButton">添加目录</button>
+    <button class="danger" id="clearAllButton">清空所有卡片</button>
+    <button id="saveChangesButton" disabled>保存更改</button>
+    <!-- 动态添加折叠/展开所有按钮 -->
+  </div>
+
+  <div id="statusMessage" class="status-message" style=""></div>
+
+  <!-- 电路板样式的目录展示区域 -->
+  <div class="board-container" id="boardContainer"></div>
+
+  <!-- 文件编辑区域 -->
+  <div class="editor-container">
+    <textarea id="fileContentEditor" disabled placeholder="选择文件以查看内容..."></textarea>
+  </div>
+</div>
+
+<script>
+  // 全局变量
+  const openedDirectories = new Map(); // 已打开的目录
+  const directoryRelationships = new Map(); // 子目录与父目录的关系
+  const rootDirectories = new Set(); // 根目录ID集合
+  const selectedItemsPerCard = new Map(); // 每个卡片选中的项目
+  const dirHandleMap = new Map(); // 目录句柄映射
+  let currentFileHandle = null; // 当前打开的文件句柄
+
+  // 引用DOM元素
+  const boardContainer = document.getElementById('boardContainer');
+  const fileContentEditor = document.getElementById('fileContentEditor');
+  const saveChangesButton = document.getElementById('saveChangesButton');
+  const statusMessageElement = document.getElementById('statusMessage');
+
+  // 绑定事件
+  document.getElementById('addDirectoryButton').addEventListener('click', handleDirectorySelectionAndDisplay);
+  document.getElementById('clearAllButton').addEventListener('click', clearAllCards);
+  document.getElementById('saveChangesButton').addEventListener('click', handleSaveFileChanges);
+
+  // 添加折叠所有按钮
+  addCollapseAllButton();
+
+  /**
+   * @function updateDebugPanel
+   * @description 更新调试面板的内容，显示原始数据结构
+   */
+  function updateDebugPanel() {
+    // 转换 Map 和 Set 为对象和数组以便更好地展示
+    // openedDirectories Map
+
+
+
+
+
+
+
+    // directoryRelationships Map
+
+
+
+
+
+
+
+    // rootDirectories Set
+
+
+
+    // selectedItemsPerCard Map
+
+
+
+
+
+
+
+    // dirHandleMap
+
+
+
+
+
+
+
+    // 全局变量
+
+
+
+
+  }
+
+  /**
+   * @function isDirectoryAlreadyOpen
+   * @description 检查目录是否已经打开
+   * @param {FileSystemDirectoryHandle} dirHandle 目录句柄
+   * @returns {boolean} 目录是否已经打开
+   */
+  async function isDirectoryAlreadyOpen(dirHandle) {
+    // 尝试获取唯一标识符
+
+      // 使用目录名称作为简单的标识符
+      // 在实际应用中可能需要更复杂的逻辑来确定唯一性
+
+
+
+
+
+
+  }
+
+  /**
+   * @function getExistingCardId
+   * @description 获取已打开目录的卡片ID
+   * @param {FileSystemDirectoryHandle} dirHandle 目录句柄
+   * @returns {string|null} 卡片ID，如果未打开则返回null
+   */
+  function getExistingCardId(dirHandle) {
+
+
+
+
+
+
+
+  }
+
+  /**
+   * @function createRootContainer
+   * @description 创建根目录容器
+   * @returns {string} 容器ID
+   */
+  function createRootContainer() {
+
+
+
+
+
+
+  }
+
+  /**
+   * @function createDirectoryCard
+   * @description 创建目录卡片
+   * @param {string} directoryName 目录名称
+   * @param {FileSystemDirectoryHandle} dirHandle 目录句柄
+   * @param {string|null} parentCardId 父卡片ID
+   * @param {string|null} containerID 容器ID
+   * @returns {HTMLElement} 创建的卡片元素
+   */
+  function createDirectoryCard(directoryName, dirHandle, parentCardId = null, containerID = null) {
+
+
+
+
+
+    // 如果是根目录卡片
+
+
+
+
+      // 建立父子关系
+
+
+
+    // 创建卡片头部
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 创建卡片内容区域
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 添加到DOM
+
+
+
+
+
+
+
+
+
+
+
+    // 记录打开的目录
+
+
+
+
+    // 初始化选中项集合
+
+
+    // 填充卡片内容
+
+
+    // 更新调试面板
+
+
+
+  }
+
+  /**
+   * @function findRootContainer
+   * @description 查找卡片所属的根容器
+   * @param {string} cardId 卡片ID
+   * @returns {string} 根容器ID
+   */
+  function findRootContainer(cardId) {
+
+    // 向上追溯到根卡片
+
+
+
+
+    // 获取根卡片的父容器
+
+
+
+
+
+
+  }
+
+  /**
+   * @function closeCard
+   * @description 关闭卡片及其所有子卡片
+   * @param {string} cardId 要关闭的卡片ID
+   */
+  function closeCard(cardId) {
+    // 递归关闭所有子卡片
+
+
+
+
+
+
+
+
+    // 先关闭所有子卡片
+
+
+    // 获取卡片DOM元素
+
+
+
+    // 获取目录路径
+
+
+
+
+
+
+
+    // 移除卡片DOM元素
+
+
+    // 清理数据结构
+
+
+
+
+
+    // 从父子关系中移除
+
+
+    // 从根目录集合中移除
+
+
+    // 清理选中项
+
+
+    // 移除连接线
+
+
+
+    // 更新调试面板
+
+  }
+
+  /**
+   * @function clearAllCards
+   * @description 清空所有卡片
+   */
+  function clearAllCards() {
+    // 复制根目录ID集合，因为在循环中会修改集合
+
+
+    // 关闭所有根目录卡片
+
+
+    // 重置状态
+
+
+
+
+
+
+    // 清空编辑器
+
+
+
+
+
+    // 移除编辑器标签
+
+
+
+
+
+    // 更新调试面板
+
+  }
+
+  /**
+   * @function selectItem
+   * @description 选中项目并添加到右侧面板
+   * @param {string} cardId 卡片ID
+   * @param {string} itemType 项目类型 ('file' 或 'directory')
+   * @param {string} itemName 项目名称
+   */
+  function selectItem(cardId, itemType, itemName) {
+    // 获取或创建选中项集合
+
+
+
+
+
+
+
+    // 如果已经选中则不重复添加
+
+
+
+
+
+    // 添加到选中集合
+
+
+    // 更新面板
+
+
+    // 更新调试面板
+
+
+    // 显示状态消息
+
+  }
+
+  /**
+   * @function removeSelectedItem
+   * @description 从选中项中移除
+   * @param {string} cardId 卡片ID
+   * @param {string} itemId 项目ID
+   */
+  function removeSelectedItem(cardId, itemId) {
+
+
+
+
+    // 从集合中移除
+
+
+    // 更新面板
+
+
+    // 更新调试面板
+
+
+    // 显示状态消息
+
+
+  }
+
+  /**
+   * @function updateSelectedItemsPanel
+   * @description 更新卡片右侧的已选中项面板
+   * @param {string} cardId 卡片ID
+   */
+  function updateSelectedItemsPanel(cardId) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 清空容器
+
+
+    // 添加所有选中项
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+  /**
+   * @function showStatusMessage
+   * @description 显示状态消息
+   * @param {string} message 消息内容
+   * @param {boolean} isError 是否为错误消息
+   */
+  function showStatusMessage(message, isError = false) {
+
+
+
+
+
+
+
+
+
+
+
+    // 3秒后自动隐藏
+
+
+
+  }
+
+  /**
+   * @function fillCardWithDirectoryContents
+   * @description 填充卡片内容区域
+   * @param {HTMLElement} contentLeft 左侧内容元素
+   * @param {HTMLElement} cardInfo 卡片信息元素
+   * @param {FileSystemDirectoryHandle} dirHandle 目录句柄
+   * @param {string} cardId 卡片ID
+   * @async
+   */
+  async function fillCardWithDirectoryContents(contentLeft, cardInfo, dirHandle, cardId) {
+
+      // 清空卡片内容
+
+
+
+
+      // 遍历目录内容
+
+
+
+
+
+
+
+          // 添加点击事件（左键）
+
+
+          // 添加右键事件
+
+
+
+
+
+
+
+
+
+          // 添加点击事件（左键）
+
+
+          // 添加右键事件
+
+
+
+
+
+
+
+
+      // 更新卡片信息
+
+
+
+
+
+
+  }
+
+  /**
+   * @function handleDirectorySelectionAndDisplay
+   * @description 处理用户选择目录并展示其内容
+   * @async
+   */
+  async function handleDirectorySelectionAndDisplay() {
+
+      // 请求读写权限以支持编辑操作
+
+
+
+
+      // 检查目录是否已经打开
+
+
+
+
+
+            // 已打开目录，滚动到该卡片
+
+
+
+
+
+
+
+      // 创建新的根容器
+
+
+      // 创建根目录卡片
+
+
+      // 显示状态消息
+
+
+
+
+
+  }
+
+  /**
+   * @function createConnectorLines
+   * @description 创建连接父卡片和子卡片的连接线
+   * @param {HTMLElement} parentCard 父卡片元素
+   * @param {HTMLElement} childCard 子卡片元素
+   */
+  function createConnectorLines(parentCard, childCard) {
+
+
+
+
+
+
+
+    // 计算相对于board-container的位置
+
+
+
+
+
+    // 创建连接线容器
+
+
+
+    // 计算连接线位置
+
+
+
+
+
+    // 水平线
+
+
+
+
+
+
+
+    // 垂直线
+
+
+
+
+
+
+
+    // 水平线2
+
+
+
+
+
+
+
+    // 添加节点
+
+
+
+
+
+
+
+
+
+
+    // 添加到DOM
+
+
+
+
+
+  }
+
+  /**
+   * @function toggleCardCollapse
+   * @description 切换卡片的收起/展开状态
+   * @param {HTMLElement} card 要切换的卡片元素
+   */
+  function toggleCardCollapse(card) {
+
+      // 展开卡片
+
+
+
+      // 收起卡片
+
+
+
+
+    // 更新连接线
+
+  }
+
+  /**
+   * @function handleDirectoryClick
+   * @description 处理目录点击，打开子目录
+   * @param {FileSystemDirectoryHandle} dirHandle 目录句柄
+   * @param {string} parentCardId 父卡片ID
+   * @async
+   */
+  async function handleDirectoryClick(dirHandle, parentCardId) {
+
+      // 检查目录是否已经打开
+
+
+
+
+
+            // 已打开目录，滚动到该卡片
+
+
+
+
+
+
+
+      // 获取父卡片和容器
+
+
+
+
+
+
+
+      // 创建新的目录卡片
+
+
+      // 创建连接线
+
+
+
+
+      // 滚动到新卡片位置
+
+
+
+
+
+  }
+
+  /**
+   * @function handleFileReadAsText
+   * @description 将文件作为文本读取并显示
+   * @param {FileSystemFileHandle} fileHandle 文件句柄
+   * @async
+   */
+  async function handleFileReadAsText(fileHandle) {
+
+
+
+
+
+
+
+
+      // 添加当前正在编辑的文件信息
+
+
+
+      // 如果已经有标签，则替换它
+
+
+
+
+
+
+
+
+      // 滚动到编辑器位置
+
+
+      // 显示状态消息
+
+
+      // 更新调试面板
+
+
+
+
+
+  }
+
+  /**
+   * @function updateConnectors
+   * @description 更新所有连接线位置
+   */
+  function updateConnectors() {
+    // 移除所有连接线
+
+
+
+    // 重新绘制所有连接线
+
+
+
+
+
+
+
+  }
+
+  // 窗口大小改变时更新连接线
+  window.addEventListener('resize', updateConnectors);
+
+  /**
+   * @function handleSaveFileChanges
+   * @description 保存对文件的修改
+   * @async
+   */
+  async function handleSaveFileChanges() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+  /**
+   * @function addCollapseAllButton
+   * @description 添加折叠/展开所有卡片按钮
+   */
+  function addCollapseAllButton() {
+
+
+
+
+    // 智能切换所有卡片状态
+    function toggleAllCards() {
+
+
+
+
+      // 检查是否有任何卡片处于展开状态
+
+
+
+
+
+
+      // 如果有任何卡片展开，则收起所有卡片
+
+
+
+
+
+
+
+
+      // 如果所有卡片都已收起，则展开所有卡片
+
+
+
+
+
+
+
+      // 更新连接线
+
+    }
+
+    collapseAllButton.addEventListener('click', toggleAllCards);
+
+    // 添加到控制区域
+    document.querySelector('.controls').appendChild(collapseAllButton);
+  }
+
+  // 初始化调试面板
+  updateDebugPanel();
+</script>
+</body>
+</html>
