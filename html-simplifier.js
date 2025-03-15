@@ -9,7 +9,7 @@
  * 5. 移除内联样式内容
  * 6. 递归保留嵌套函数声明
  * 7. 保留函数体内的所有注释
- * 8. 保留变量声明部分但移除实现部分
+ * 8. 保留完整的变量声明（包括赋值部分）
  * 9. 保留if/try等语句的声明和大括号结构
  */
 
@@ -134,13 +134,10 @@ function simplifyHtml(htmlContent) {
                 continue; // 保留多行注释的后续行
             }
             
-            // 检测变量声明行
-            if (varDeclRegex.test(trimmedLine)) {
-                // 只保留变量声明部分，去掉赋值部分
-                const equalIndex = line.indexOf('=');
-                if (equalIndex !== -1) {
-                    lines[i] = line.substring(0, equalIndex + 1);
-                }
+            // 检测变量声明行 - 保留完整的变量声明
+            if (varDeclRegex.test(trimmedLine) && !functionDeclRegex.test(trimmedLine) && 
+                !methodDeclRegex.test(trimmedLine) && !arrowFuncRegex.test(trimmedLine)) {
+                // 保留完整的变量声明，不截断
                 continue;
             }
             
@@ -192,13 +189,10 @@ function simplifyHtml(htmlContent) {
                     }
                 }
                 
-                // 在控制结构内部检查嵌套的变量声明
-                if (varDeclRegex.test(trimmedLine)) {
-                    // 只保留变量声明部分，去掉赋值部分
-                    const equalIndex = line.indexOf('=');
-                    if (equalIndex !== -1) {
-                        lines[i] = line.substring(0, equalIndex + 1);
-                    }
+                // 在控制结构内部检查嵌套的变量声明 - 保留完整声明
+                if (varDeclRegex.test(trimmedLine) && !functionDeclRegex.test(trimmedLine) && 
+                    !methodDeclRegex.test(trimmedLine) && !arrowFuncRegex.test(trimmedLine)) {
+                    // 保留完整的变量声明，不截断
                     continue;
                 }
                 
@@ -285,13 +279,10 @@ function simplifyHtml(htmlContent) {
                     continue;
                 }
                 
-                // 在函数体内检查变量声明
-                if (varDeclRegex.test(trimmedLine)) {
-                    // 只保留变量声明部分，去掉赋值部分
-                    const equalIndex = line.indexOf('=');
-                    if (equalIndex !== -1) {
-                        lines[i] = line.substring(0, equalIndex + 1);
-                    }
+                // 在函数体内检查变量声明 - 保留完整声明
+                if (varDeclRegex.test(trimmedLine) && !functionDeclRegex.test(trimmedLine) && 
+                    !methodDeclRegex.test(trimmedLine) && !arrowFuncRegex.test(trimmedLine)) {
+                    // 保留完整的变量声明，不截断
                     continue;
                 }
                 
