@@ -1,0 +1,24 @@
+{
+  "name": "ast-code-analyzer",
+  "version": "1.0.0",
+  "description": "基于AST的代码分析与文档自动生成工具",
+  "main": "ast-example.js",
+  "scripts": {
+    "start": "node ast-example.js",
+    "analyze": "node ast-example.js",
+    "test": "node ast-example.js json-format-extractor.js"
+  },
+  "keywords": [
+    "AST",
+    "代码分析",
+    "文档生成",
+    "静态分析"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.22.7",
+    "@babel/traverse": "^7.22.8",
+    "@babel/types": "^7.22.5"
+  }
+} 
