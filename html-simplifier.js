@@ -9,6 +9,8 @@
  * 5. 移除内联样式内容
  * 6. 递归保留嵌套函数声明
  * 7. 保留函数体内的所有注释
+ * 8. 保留变量声明部分但移除实现部分
+ * 9. 保留if/try等语句的声明和大括号结构
  */
 
 const fs = require('fs');
@@ -40,6 +42,21 @@ function simplifyHtml(htmlContent) {
     let inJSComment = false;      // 是否在JS注释内
     let isMultiLineJSComment = false; // 是否是多行JS注释
     let jsMultiLineCommentStart = 0; // 多行注释开始的行号
+    let inJSControlStructure = false; // 是否在if/for/while/try等控制结构内
+    
+    // 预定义正则表达式
+    // 检测函数声明行 (function name() 或 async function name() 或 const name = function() 等)
+    const functionDeclRegex = /(async\s+)?function\s+\w+\s*\(.*\)|(?:const|let|var)\s+\w+\s*=\s*(async\s+)?function\s*\(.*\)|(?:const|let|var)\s+\w+\s*=\s*\(.*\)\s*=>/;
+    const methodDeclRegex = /\w+\s*:\s*(async\s+)?function\s*\(.*\)/;
+    const arrowFuncRegex = /(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?\(.*\)\s*=>/;
+    
+    // 检测变量声明行
+    const varDeclRegex = /^(?:const|let|var)\s+\w+\s*=/;
+    
+    // 检测控制结构开始 (if, for, while, switch, try-catch)
+    const controlStructureRegex = /^(?:if|for|while|switch|try)\s*\(/;
+    const catchBlockRegex = /^(?:catch|finally)\s*(?:\([^)]*\))?\s*{/;
+    const elseBlockRegex = /^else\s*(?:{|if)/;
     
     // 处理每一行
     for (let i = 0; i < lines.length; i++) {
@@ -80,6 +97,7 @@ function simplifyHtml(htmlContent) {
             inJSFunctionDeclaration = false;
             inJSComment = false;
             isMultiLineJSComment = false;
+            inJSControlStructure = false;
             // 保留结束script标签行
             continue;
         }
@@ -116,14 +134,93 @@ function simplifyHtml(htmlContent) {
                 continue; // 保留多行注释的后续行
             }
             
-            // 检测函数声明行 (function name() 或 async function name() 或 const name = function() 等)
-            const functionDeclRegex = /(async\s+)?function\s+\w+\s*\(.*\)|(?:const|let|var)\s+\w+\s*=\s*(async\s+)?function\s*\(.*\)|(?:const|let|var)\s+\w+\s*=\s*\(.*\)\s*=>/;
-            const methodDeclRegex = /\w+\s*:\s*(async\s+)?function\s*\(.*\)/;
-            const arrowFuncRegex = /(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?\(.*\)\s*=>/;
+            // 检测变量声明行
+            if (varDeclRegex.test(trimmedLine)) {
+                // 只保留变量声明部分，去掉赋值部分
+                const equalIndex = line.indexOf('=');
+                if (equalIndex !== -1) {
+                    lines[i] = line.substring(0, equalIndex + 1);
+                }
+                continue;
+            }
             
-            // 检测开始大括号
-            const openBraceIndex = line.indexOf('{');
-            const closeBraceIndex = line.indexOf('}');
+            if (controlStructureRegex.test(trimmedLine) || catchBlockRegex.test(trimmedLine) || elseBlockRegex.test(trimmedLine)) {
+                // 保留控制结构声明行
+                
+                // 如果这一行包含左大括号，进入控制结构体
+                const openBraceIndex = line.indexOf('{');
+                if (openBraceIndex !== -1) {
+                    inJSControlStructure = true;
+                    jsBraceCounter = 1; // 开始计数大括号
+                    
+                    // 如果同一行还有右大括号，可能是空的结构体
+                    const closeBraceIndex = line.indexOf('}', openBraceIndex);
+                    if (closeBraceIndex !== -1) {
+                        jsBraceCounter--;
+                        if (jsBraceCounter === 0) {
+                            inJSControlStructure = false;
+                        }
+                    }
+                }
+                continue;
+            }
+            
+            // 如果不是控制结构声明行，但遇到了开始大括号，可能是控制结构体的开始
+            if (!inJSControlStructure && !inJSFunction && line.indexOf('{') !== -1 && !functionDeclRegex.test(trimmedLine)) {
+                const prevLine = i > 0 ? lines[i-1].trim() : '';
+                // 检查上一行是否是控制结构行但没有大括号
+                if (controlStructureRegex.test(prevLine) || catchBlockRegex.test(prevLine) || elseBlockRegex.test(prevLine)) {
+                    inJSControlStructure = true;
+                    jsBraceCounter = 1;
+                    continue;
+                }
+            }
+            
+            // 处理控制结构体内部
+            if (inJSControlStructure) {
+                // 计算这一行的大括号数量
+                const openBraces = (line.match(/{/g) || []).length;
+                const closeBraces = (line.match(/}/g) || []).length;
+                jsBraceCounter += openBraces - closeBraces;
+                
+                // 检查控制结构是否结束
+                if (jsBraceCounter === 0) {
+                    inJSControlStructure = false;
+                    // 保留控制结构结束行(右大括号)
+                    if (trimmedLine === '}') {
+                        continue;
+                    }
+                }
+                
+                // 在控制结构内部检查嵌套的变量声明
+                if (varDeclRegex.test(trimmedLine)) {
+                    // 只保留变量声明部分，去掉赋值部分
+                    const equalIndex = line.indexOf('=');
+                    if (equalIndex !== -1) {
+                        lines[i] = line.substring(0, equalIndex + 1);
+                    }
+                    continue;
+                }
+                
+                // 检查是否是注释行
+                if (trimmedLine.startsWith('//') || trimmedLine.startsWith('/*') || trimmedLine.includes('*/')) {
+                    // 保留注释行
+                    continue;
+                }
+                
+                // 检查内部的嵌套控制结构
+                if (controlStructureRegex.test(trimmedLine) || catchBlockRegex.test(trimmedLine) || elseBlockRegex.test(trimmedLine)) {
+                    continue;
+                }
+                
+                // 清空非特殊行
+                if (trimmedLine === '') {
+                    continue; // 保留空行
+                } else if (trimmedLine !== '}') { // 不清空结束大括号行
+                    lines[i] = '';
+                }
+                continue;
+            }
             
             // 检查是否是函数声明行（包括嵌套函数）
             if (functionDeclRegex.test(trimmedLine) || methodDeclRegex.test(trimmedLine) || arrowFuncRegex.test(trimmedLine)) {
@@ -131,6 +228,9 @@ function simplifyHtml(htmlContent) {
                 // 保留函数声明行
                 
                 // 如果声明行包含左大括号，进入函数体
+                const openBraceIndex = line.indexOf('{');
+                const closeBraceIndex = line.indexOf('}');
+                
                 if (openBraceIndex !== -1) {
                     inJSFunction = true;
                     jsFunctionDepth++;
@@ -149,13 +249,16 @@ function simplifyHtml(htmlContent) {
             }
             
             // 如果不是函数声明行，但上一行是，检查是否是开始大括号
-            if (inJSFunctionDeclaration && !inJSFunction && openBraceIndex !== -1) {
+            if (inJSFunctionDeclaration && !inJSFunction && line.indexOf('{') !== -1) {
                 inJSFunctionDeclaration = false;
                 inJSFunction = true;
                 jsFunctionDepth++;
                 jsBraceCounter = 1;
                 
                 // 如果同一行还有右大括号，检查是否函数结束
+                const openBraceIndex = line.indexOf('{');
+                const closeBraceIndex = line.indexOf('}');
+                
                 if (closeBraceIndex !== -1 && openBraceIndex < closeBraceIndex) {
                     jsBraceCounter--;
                     if (jsBraceCounter === 0) {
@@ -182,6 +285,21 @@ function simplifyHtml(htmlContent) {
                     continue;
                 }
                 
+                // 在函数体内检查变量声明
+                if (varDeclRegex.test(trimmedLine)) {
+                    // 只保留变量声明部分，去掉赋值部分
+                    const equalIndex = line.indexOf('=');
+                    if (equalIndex !== -1) {
+                        lines[i] = line.substring(0, equalIndex + 1);
+                    }
+                    continue;
+                }
+                
+                // 在函数体内检查控制结构
+                if (controlStructureRegex.test(trimmedLine) || catchBlockRegex.test(trimmedLine) || elseBlockRegex.test(trimmedLine)) {
+                    continue;
+                }
+                
                 // 计算这一行的大括号数量
                 const openBraces = (line.match(/{/g) || []).length;
                 const closeBraces = (line.match(/}/g) || []).length;
@@ -204,6 +322,14 @@ function simplifyHtml(htmlContent) {
                     lines[i] = '';
                     continue;
                 }
+            }
+            
+            // 检查事件监听器和其他直接执行的语句，不保留
+            if (trimmedLine.includes('.addEventListener') || 
+                trimmedLine.includes('document.getElementById') ||
+                trimmedLine.endsWith(';')) {
+                lines[i] = '';
+                continue;
             }
             
             // 保留非函数体的其他JavaScript代码（如全局变量声明等）
@@ -357,6 +483,8 @@ function getStatistics(originalContent, simplifiedContent) {
     
     // 正则表达式查找各种元素
     const functionDeclarationRegex = /(function\s+\w+|const\s+\w+\s*=\s*function|\w+\s*:\s*function)/g;
+    const varDeclarationRegex = /(?:const|let|var)\s+\w+\s*=/g;
+    const controlStructureRegex = /(?:if|for|while|switch|try)\s*\(/g;
     
     // 计算JavaScript注释（包括单行和多行）
     const singleLineCommentCount = (simplifiedContent.match(/\/\/.*$/gm) || []).length;
@@ -368,6 +496,8 @@ function getStatistics(originalContent, simplifiedContent) {
     const inlineStyleCount = (originalContent.match(/style=["'][^"']*["']/g) || []).length;
     const commentCount = (simplifiedContent.match(/<!--[\s\S]*?-->/g) || []).length;
     const functionCount = (simplifiedContent.match(functionDeclarationRegex) || []).length;
+    const varCount = (simplifiedContent.match(varDeclarationRegex) || []).length;
+    const controlCount = (simplifiedContent.match(controlStructureRegex) || []).length;
     
     return {
         originalLineCount: originalLines.length,
@@ -376,9 +506,11 @@ function getStatistics(originalContent, simplifiedContent) {
         cssRules: cssRuleCount,
         scriptTags: scriptTagCount,
         inlineStyles: inlineStyleCount,
-        comments: commentCount,
+        htmlComments: commentCount,
         functions: functionCount,
-        jsComments: singleLineCommentCount + multiLineCommentCount
+        jsComments: singleLineCommentCount + multiLineCommentCount,
+        varDeclarations: varCount,
+        controlStructures: controlCount
     };
 }
 
@@ -418,9 +550,11 @@ function main() {
         console.log(`- 保留的CSS规则数量: ${stats.cssRules}`);
         console.log(`- 保留的脚本标签数量: ${stats.scriptTags}`);
         console.log(`- 保留的函数声明数量: ${stats.functions || 0}`);
+        console.log(`- 保留的变量声明数量: ${stats.varDeclarations || 0}`);
+        console.log(`- 保留的控制结构数量: ${stats.controlStructures || 0}`);
         console.log(`- 保留的JavaScript注释数量: ${stats.jsComments || 0}`);
         console.log(`- 处理的内联样式数量: ${stats.inlineStyles}`);
-        console.log(`- 保留的HTML注释数量: ${stats.comments}`);
+        console.log(`- 保留的HTML注释数量: ${stats.htmlComments}`);
     } else {
         console.error(`简化失败: ${result.error}`);
     }

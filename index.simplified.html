@@ -7,30 +7,33 @@
   <style>
     /* 基本样式 */
     body {
+      font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
       display: flex;
-      height: 100vh;
-      overflow: hidden;
+      background-color: #f0f0f0;
+      color: #333;
+      min-height: 100vh;
     }
 
     /* 左侧调试面板 */
     .debug-panel {
       width: 300px;
-      height: 100vh;
-      background-color: #f5f5f5;
-      border-right: 1px solid #ddd;
+      background-color: #2c3e50;
+      color: #ecf0f1;
       padding: 10px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
       overflow-y: auto;
-      flex-shrink: 0;
+      max-height: 100vh;
+      position: sticky;
+      top: 0;
     }
 
     .debug-panel h2 {
-      font-size: 1.2rem;
+      color: #e74c3c;
+      border-bottom: 1px solid #7f8c8d;
+      padding-bottom: 10px;
       margin-top: 0;
-      margin-bottom: 10px;
-      color: #333;
     }
 
     .debug-section {
@@ -38,121 +41,125 @@
     }
 
     .debug-section h3 {
-      font-size: 1rem;
-      margin-top: 5px;
-      margin-bottom: 5px;
+      color: #3498db;
+      margin: 5px 0;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
     }
 
     .debug-content {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 8px;
+      background-color: #34495e;
+      padding: 10px;
+      border-radius: 3px;
+      font-family: monospace;
       font-size: 0.8rem;
+      white-space: pre-wrap;
+      word-break: break-all;
       max-height: 150px;
       overflow-y: auto;
-      word-break: break-all;
     }
 
     .debug-content.json {
-      font-family: monospace;
+      color: #2ecc71;
     }
 
     .debug-count {
-      background-color: #007bff;
+      background-color: #e74c3c;
       color: white;
-      border-radius: 50%;
-      min-width: 20px;
-      height: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      margin-left: 5px;
     }
 
     /* 主内容区域 */
     .main-content {
       flex: 1;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      padding: 10px;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     /* 控制区域 */
     .controls {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     button {
-      padding: 8px 12px;
+      padding: 8px 15px;
+      background-color: #3498db;
+      color: white;
       border: none;
       border-radius: 4px;
-      background-color: #007bff;
-      color: white;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
     button.danger {
-      background-color: #dc3545;
+      background-color: #e74c3c;
     }
 
     button:disabled {
-      background-color: #6c757d;
+      background-color: #95a5a6;
       cursor: not-allowed;
     }
 
     /* 布局容器 - 电路板风格 */
     .board-container {
-      flex: 1;
-      position: relative;
-      background-color: #f8f9fa;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
       padding: 20px;
-      overflow: auto;
-      margin-bottom: 10px;
-      min-height: 200px;
+      background-color: #2c3e50;
+      border-radius: 8px;
+      position: relative;
+      min-height: 300px;
+      overflow: visible;
     }
 
     /* 根目录区域 */
     .root-directory-container {
-      margin-bottom: 30px;
-      position: relative;
-      padding-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 20px;
     }
 
     /* 目录卡片样式 */
     .directory-card {
-      border: 1px solid #007bff;
-      border-radius: 6px;
-      background-color: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      width: 800px;
-      max-width: 100%;
+      width: 300px;
+      background-color: #ecf0f1;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 10px 0;
       position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     /* 卡片内容区域平滑过渡效果 */
     .card-content {
       display: flex;
-      max-height: 400px;
-      transition: max-height 0.3s ease;
+      height: 300px;
+      transition: height 0.3s ease-out;
+      overflow: hidden;
     }
 
     /* 收起状态的卡片内容样式 */
     .directory-card.card-collapsed .card-content {
-      max-height: 0;
-      overflow: hidden;
-      border-top: none;
-      padding: 0;
+      height: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: height 0.3s ease-out, opacity 0.2s ease-out, visibility 0s 0.3s;
     }
 
     /* 收起状态下标题栏底部边框隐藏 */
@@ -162,65 +169,69 @@
 
     /* 收起状态的卡片样式 */
     .directory-card.card-collapsed {
-      margin-bottom: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: scale(0.95);
     }
 
     /* 根目录卡片 */
     .directory-card.root {
-      margin-bottom: 30px;
+      border: 2px solid #e74c3c;
     }
 
     /* 卡片连接线 */
     .card-connector {
       position: absolute;
-      background-color: #007bff;
+      z-index: 1;
     }
 
     .connector-horizontal {
       height: 2px;
+      background-color: #3498db;
     }
 
     .connector-vertical {
       width: 2px;
+      background-color: #3498db;
     }
 
     /* 卡片节点点 */
     .connector-node {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background-color: #007bff;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
+      background-color: #e74c3c;
+      position: absolute;
       transform: translate(-50%, -50%);
+      z-index: 2;
     }
 
     .card-header {
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #ddd;
       padding: 10px 15px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 8px 8px 0 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid #bdc3c7;
     }
 
     .root .card-header {
-      background-color: #e9ecef;
+      background-color: #e74c3c;
     }
 
     .card-title-section {
-      display: flex;
-      align-items: center;
+      flex: 1;
     }
 
     .card-title {
-      font-weight: bold;
-      margin-right: 10px;
+      margin: 0;
+      font-size: 1rem;
     }
 
     .card-info {
       font-size: 0.8rem;
-      color: #6c757d;
+      opacity: 0.8;
     }
 
     /* 卡片操作按钮 */
@@ -231,168 +242,166 @@
     .card-collapse-btn, .card-close-btn {
       background: none;
       border: none;
-      color: #6c757d;
+      color: white;
       cursor: pointer;
-      font-size: 1.2rem;
-      width: 30px;
-      height: 30px;
+      padding: 5px;
+      margin-left: 5px;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 24px;
+      height: 24px;
       border-radius: 4px;
-      padding: 0;
-      margin-left: 5px;
       transition: background-color 0.2s;
     }
 
     .card-collapse-btn:hover, .card-close-btn:hover {
-      background-color: rgba(0,0,0,0.05);
+      background-color: rgba(255, 255, 255, 0.2);
     }
 
     .content-left {
-      flex: 1;
-      padding: 15px;
-      border-right: 1px solid #ddd;
+      flex: 2;
+      padding: 10px;
+      overflow-y: auto;
     }
 
     .content-right {
-      width: 250px;
-      padding: 15px;
+      flex: 1;
+      padding: 10px;
+      border-left: 1px solid #bdc3c7;
     }
 
     .content-right-header {
-      font-weight: bold;
-      margin-bottom: 10px;
       padding-bottom: 5px;
-      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #bdc3c7;
+      font-weight: bold;
+      font-size: 0.9rem;
     }
 
     /* 文件项样式 */
     .file-item, .directory-item {
-      padding: 6px 10px;
-      margin-bottom: 5px;
+      padding: 5px;
+      margin-bottom: 3px;
       border-radius: 4px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
     }
 
     .file-item:hover, .directory-item:hover {
-      background-color: #f8f9fa;
+      background-color: #e0e0e0;
     }
 
     .directory-item {
-      color: #007bff;
+      color: #3498db;
     }
 
     .item-icon {
-      margin-right: 8px;
+      margin-right: 5px;
     }
 
     /* 选中项样式 */
     .selected-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 6px 10px;
-      background-color: #f1f8ff;
+      justify-content: space-between;
+      padding: 5px;
+      margin-bottom: 3px;
+      background-color: #eaf2f8;
       border-radius: 4px;
-      margin-bottom: 5px;
     }
 
     .selected-item .item-name {
-      word-break: break-all;
+      font-size: 0.9rem;
     }
 
     .remove-item {
-      border: none;
       background: none;
-      color: #dc3545;
+      border: none;
+      color: #e74c3c;
       cursor: pointer;
-      font-size: 0.9rem;
-      width: 24px;
-      height: 24px;
+      padding: 2px 5px;
+      font-size: 0.8rem;
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
-      padding: 0;
-      transition: background-color 0.2s;
+      opacity: 0.7;
+      transition: opacity 0.2s;
     }
 
     .remove-item:hover {
-      background-color: rgba(220,53,69,0.1);
+      opacity: 1;
     }
 
     .empty-selection {
-      color: #6c757d;
+      font-size: 0.9rem;
+      color: #7f8c8d;
       font-style: italic;
-      text-align: center;
     }
 
     /* 文件编辑区域 */
     .editor-container {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 10px;
-      height: 250px;
+      margin-top: 20px;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .editor-label {
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      color: #555;
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      margin-bottom: 5px;
     }
 
     textarea {
-      flex: 1;
-      resize: none;
-      border: 1px solid #ddd;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      border: 1px solid #bdc3c7;
       border-radius: 4px;
-      padding: 8px;
+      padding: 10px;
       font-family: monospace;
-      outline: none;
+      resize: vertical;
     }
 
     /* 状态消息 */
     .status-message {
       padding: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       border-radius: 4px;
-      text-align: center;
+      background-color: #d4f1f4;
       display: none;
     }
 
     /* 右键菜单 */
     .context-menu {
       position: absolute;
-      background: white;
-      border: 1px solid #ddd;
+      background-color: white;
+      border: 1px solid #bdc3c7;
       border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       padding: 5px 0;
       z-index: 1000;
+      display: none;
     }
 
     .context-menu-item {
-      padding: 8px 15px;
+      padding: 5px 15px;
       cursor: pointer;
     }
 
     .context-menu-item:hover {
-      background-color: #f5f5f5;
+      background-color: #eaf2f8;
     }
 
     /* 响应式设计 */
     @media (max-width: 1200px) {
       body {
         flex-direction: column;
-      }
-      
-      .debug-panel {
-        width: 100%;
-        height: auto;
-        max-height: 200px;
       }
     }
   </style>
@@ -449,26 +458,26 @@
 
 <script>
   // 全局变量
-  const openedDirectories = new Map(); // 已打开的目录
-  const directoryRelationships = new Map(); // 子目录与父目录的关系
-  const rootDirectories = new Set(); // 根目录ID集合
-  const selectedItemsPerCard = new Map(); // 每个卡片选中的项目
-  const dirHandleMap = new Map(); // 目录句柄映射
-  let currentFileHandle = null; // 当前打开的文件句柄
+  const openedDirectories =
+  const directoryRelationships =
+  const rootDirectories =
+  const selectedItemsPerCard =
+  const dirHandleMap =
+  let currentFileHandle =
 
   // 引用DOM元素
-  const boardContainer = document.getElementById('boardContainer');
-  const fileContentEditor = document.getElementById('fileContentEditor');
-  const saveChangesButton = document.getElementById('saveChangesButton');
-  const statusMessageElement = document.getElementById('statusMessage');
+  const boardContainer =
+  const fileContentEditor =
+  const saveChangesButton =
+  const statusMessageElement =
 
   // 绑定事件
-  document.getElementById('addDirectoryButton').addEventListener('click', handleDirectorySelectionAndDisplay);
-  document.getElementById('clearAllButton').addEventListener('click', clearAllCards);
-  document.getElementById('saveChangesButton').addEventListener('click', handleSaveFileChanges);
+
+
+
 
   // 添加折叠所有按钮
-  addCollapseAllButton();
+
 
   /**
    * @function updateDebugPanel
@@ -477,18 +486,18 @@
   function updateDebugPanel() {
     // 转换 Map 和 Set 为对象和数组以便更好地展示
     // openedDirectories Map
+    const openedDirsObj =
+    for (const [key, value] of openedDirectories.entries()) {
 
-
-
-
+    }
 
 
 
     // directoryRelationships Map
+    const relationshipsObj =
+    for (const [key, value] of directoryRelationships.entries()) {
 
-
-
-
+    }
 
 
 
@@ -497,24 +506,24 @@
 
 
     // selectedItemsPerCard Map
+    const selectedItemsObj =
+    for (const [key, value] of selectedItemsPerCard.entries()) {
 
-
-
-
+    }
 
 
 
     // dirHandleMap
+    const dirHandleObj =
+    for (const [key, value] of dirHandleMap.entries()) {
 
-
-
-
+    }
 
 
 
     // 全局变量
-
-
+    const globalVars =
+      currentFileHandle: currentFileHandle ? currentFileHandle.name : null
 
 
   }
@@ -530,7 +539,7 @@
 
       // 使用目录名称作为简单的标识符
       // 在实际应用中可能需要更复杂的逻辑来确定唯一性
-
+      const path =
 
 
 
@@ -546,7 +555,7 @@
    */
   function getExistingCardId(dirHandle) {
 
-
+      const path =
 
 
 
@@ -560,8 +569,8 @@
    * @returns {string} 容器ID
    */
   function createRootContainer() {
-
-
+    const containerId =
+    const container =
 
 
 
@@ -578,52 +587,52 @@
    * @returns {HTMLElement} 创建的卡片元素
    */
   function createDirectoryCard(directoryName, dirHandle, parentCardId = null, containerID = null) {
-
-
+    const cardId =
+    const card =
 
 
 
     // 如果是根目录卡片
-
+    if (!parentCardId) {
 
 
 
       // 建立父子关系
 
-
+    }
 
     // 创建卡片头部
+    const header =
+
+
+    const titleSection =
+
+
+    const title =
+
+
+
+    const info =
 
 
 
 
 
 
+    const actions =
+
+
+    const collapseBtn =
 
 
 
 
 
+    const closeBtn =
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    closeBtn.onclick = (e) => {
 
 
 
@@ -635,20 +644,20 @@
 
 
     // 创建卡片内容区域
+    const content =
+
+
+    const contentLeft =
+
+
+    const contentRight =
+
+
+    const contentRightHeader =
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+    const selectedItemsContainer =
 
 
 
@@ -662,19 +671,19 @@
 
 
     // 添加到DOM
+    if (containerID) {
+      const container =
+      if (container) {
 
 
 
+      }
+    } else {
 
-
-
-
-
-
-
+    }
 
     // 记录打开的目录
-
+    const path =
 
 
 
@@ -697,17 +706,17 @@
    * @returns {string} 根容器ID
    */
   function findRootContainer(cardId) {
-
+    let currentId =
     // 向上追溯到根卡片
+    while (directoryRelationships.has(currentId)) {
 
-
-
+    }
 
     // 获取根卡片的父容器
+    const rootCard =
+    if (rootCard && rootCard.parentElement) {
 
-
-
-
+    }
 
 
   }
@@ -719,37 +728,37 @@
    */
   function closeCard(cardId) {
     // 递归关闭所有子卡片
+    const childrenToClose =
 
 
+      if (parentId === cardId) {
 
-
-
-
+      }
 
 
     // 先关闭所有子卡片
 
 
     // 获取卡片DOM元素
-
-
+    const card =
+    if (!card) return;
 
     // 获取目录路径
+    let directoryPath =
 
+      if (id === cardId) {
 
-
-
-
+      }
 
 
     // 移除卡片DOM元素
 
 
     // 清理数据结构
+    if (directoryPath) {
 
 
-
-
+    }
 
     // 从父子关系中移除
 
@@ -761,7 +770,7 @@
 
 
     // 移除连接线
-
+    const connectors =
 
 
     // 更新调试面板
@@ -774,7 +783,7 @@
    */
   function clearAllCards() {
     // 复制根目录ID集合，因为在循环中会修改集合
-
+    const rootIds =
 
     // 关闭所有根目录卡片
 
@@ -793,10 +802,10 @@
 
 
     // 移除编辑器标签
+    const existingLabel =
+    if (existingLabel) {
 
-
-
-
+    }
 
     // 更新调试面板
 
@@ -811,18 +820,18 @@
    */
   function selectItem(cardId, itemType, itemName) {
     // 获取或创建选中项集合
+    if (!selectedItemsPerCard.has(cardId)) {
 
+    }
 
-
-
-
-
+    const items =
+    const itemId =
 
     // 如果已经选中则不重复添加
+    if (items.has(itemId)) {
 
 
-
-
+    }
 
     // 添加到选中集合
 
@@ -844,9 +853,9 @@
    * @param {string} itemId 项目ID
    */
   function removeSelectedItem(cardId, itemId) {
+    if (!selectedItemsPerCard.has(cardId)) return;
 
-
-
+    const items =
 
     // 从集合中移除
 
@@ -858,7 +867,7 @@
 
 
     // 显示状态消息
-
+    const itemName =
 
   }
 
@@ -868,23 +877,41 @@
    * @param {string} cardId 卡片ID
    */
   function updateSelectedItemsPanel(cardId) {
+    const card =
+    if (!card) return;
+
+    const selectedItemsContainer =
+    if (!selectedItemsContainer) return;
+
+    const items =
+
+    if (!items || items.size === 0) {
 
 
-
-
-
-
-
-
-
-
-
-
+    }
 
     // 清空容器
 
 
     // 添加所有选中项
+    for (const itemId of items) {
+
+      const itemName =
+
+      const itemElement =
+
+
+      const nameElement =
+
+
+      const icon =
+
+
+
+
+
+
+      const removeButton =
 
 
 
@@ -893,25 +920,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
   }
 
   /**
@@ -924,16 +933,16 @@
 
 
 
+    if (isError) {
 
 
 
 
 
-
-
+    }
 
     // 3秒后自动隐藏
-
+    setTimeout(() => {
 
 
   }
@@ -951,26 +960,13 @@
 
       // 清空卡片内容
 
-
-
+      let fileCount =
+      let dirCount =
 
       // 遍历目录内容
 
-
-
-
-
-
-
-          // 添加点击事件（左键）
-
-
-          // 添加右键事件
-
-
-
-
-
+        const entryElement =
+        if (entry.kind === 'directory') {
 
 
 
@@ -986,14 +982,27 @@
 
 
 
+
+
+          // 添加点击事件（左键）
+
+
+          // 添加右键事件
+
+
+
+
+        }
+
+      }
 
       // 更新卡片信息
 
+    } catch (error) {
 
 
 
-
-
+    }
   }
 
   /**
@@ -1004,29 +1013,29 @@
   async function handleDirectorySelectionAndDisplay() {
 
       // 请求读写权限以支持编辑操作
-
+      const dirHandle =
 
 
 
       // 检查目录是否已经打开
-
-
-
-
-
+      if (await isDirectoryAlreadyOpen(dirHandle)) {
+        const existingCardId =
+        if (existingCardId) {
+          const card =
+          if (card) {
             // 已打开目录，滚动到该卡片
 
 
 
-
+          }
 
 
 
       // 创建新的根容器
-
+      const containerId =
 
       // 创建根目录卡片
-
+      const rootCard =
 
       // 显示状态消息
 
@@ -1034,40 +1043,40 @@
 
 
 
-  }
+
 
   /**
-   * @function createConnectorLines
-   * @description 创建连接父卡片和子卡片的连接线
-   * @param {HTMLElement} parentCard 父卡片元素
-   * @param {HTMLElement} childCard 子卡片元素
+
+
+
+
    */
   function createConnectorLines(parentCard, childCard) {
+    if (!parentCard || !childCard) return;
 
+    const parentRect =
+    const childRect =
 
-
-
-
-
+    const boardRect =
 
     // 计算相对于board-container的位置
-
-
-
-
+    const parentLeft =
+    const parentTop =
+    const childLeft =
+    const childTop =
 
     // 创建连接线容器
-
+    const connector =
 
 
     // 计算连接线位置
-
-
-
-
+    const startX =
+    const startY =
+    const endX =
+    const endY =
 
     // 水平线
-
+    const horizontalLine =
 
 
 
@@ -1075,7 +1084,7 @@
 
 
     // 垂直线
-
+    const verticalLine =
 
 
 
@@ -1083,7 +1092,7 @@
 
 
     // 水平线2
-
+    const horizontalLine2 =
 
 
 
@@ -1091,12 +1100,12 @@
 
 
     // 添加节点
+    const startNode =
 
 
 
 
-
-
+    const endNode =
 
 
 
@@ -1115,7 +1124,7 @@
    * @param {HTMLElement} card 要切换的卡片元素
    */
   function toggleCardCollapse(card) {
-
+    if (card.classList.contains('card-collapsed')) {
       // 展开卡片
 
 
@@ -1123,10 +1132,10 @@
       // 收起卡片
 
 
-
+    }
 
     // 更新连接线
-
+    setTimeout(updateConnectors, 300); // 等待过渡动画完成
   }
 
   /**
@@ -1139,41 +1148,41 @@
   async function handleDirectoryClick(dirHandle, parentCardId) {
 
       // 检查目录是否已经打开
-
-
-
-
-
+      if (await isDirectoryAlreadyOpen(dirHandle)) {
+        const existingCardId =
+        if (existingCardId) {
+          const card =
+          if (card) {
             // 已打开目录，滚动到该卡片
 
 
 
-
+          }
 
 
 
       // 获取父卡片和容器
+      const parentCard =
+      if (!parentCard) {
 
+      }
 
-
-
-
-
+      const containerID =
 
       // 创建新的目录卡片
-
+      const directoryCard =
 
       // 创建连接线
-
+      setTimeout(() => {
 
 
 
       // 滚动到新卡片位置
 
+    } catch (error) {
 
 
-
-
+    }
   }
 
   /**
@@ -1184,22 +1193,22 @@
    */
   async function handleFileReadAsText(fileHandle) {
 
-
-
+      const file =
+      const textContent =
 
 
 
 
 
       // 添加当前正在编辑的文件信息
-
+      const editorLabel =
 
 
       // 如果已经有标签，则替换它
+      const existingLabel =
+      if (existingLabel) {
 
-
-
-
+      }
 
 
 
@@ -1212,10 +1221,10 @@
 
       // 更新调试面板
 
+    } catch (error) {
 
 
-
-
+    }
   }
 
   /**
@@ -1224,42 +1233,42 @@
    */
   function updateConnectors() {
     // 移除所有连接线
-
+    const connectors =
 
 
     // 重新绘制所有连接线
 
+      const parentCard =
+      const childCard =
+      if (parentCard && childCard) {
+
+      }
 
 
-
-
-
-
-  }
 
   // 窗口大小改变时更新连接线
-  window.addEventListener('resize', updateConnectors);
+
 
   /**
-   * @function handleSaveFileChanges
-   * @description 保存对文件的修改
-   * @async
+
+
+
    */
   async function handleSaveFileChanges() {
+    if (!currentFileHandle) {
+
+
+    }
+
+    try {
+      const writable =
 
 
 
+    } catch (error) {
 
 
-
-
-
-
-
-
-
-
-
+    }
   }
 
   /**
@@ -1267,52 +1276,52 @@
    * @description 添加折叠/展开所有卡片按钮
    */
   function addCollapseAllButton() {
-
+    const collapseAllButton =
 
 
 
     // 智能切换所有卡片状态
     function toggleAllCards() {
+      const allCards =
+      if (allCards.length === 0) return;
 
-
-
-
+      let anyExpanded =
       // 检查是否有任何卡片处于展开状态
 
+        if (!card.classList.contains('card-collapsed')) {
 
-
-
+        }
 
 
       // 如果有任何卡片展开，则收起所有卡片
+      if (anyExpanded) {
+
+          if (!card.classList.contains('card-collapsed')) {
 
 
-
-
-
-
+          }
 
 
       // 如果所有卡片都已收起，则展开所有卡片
+      else {
 
 
 
 
-
-
+      }
 
       // 更新连接线
 
     }
 
-    collapseAllButton.addEventListener('click', toggleAllCards);
+
 
     // 添加到控制区域
-    document.querySelector('.controls').appendChild(collapseAllButton);
+
   }
 
   // 初始化调试面板
-  updateDebugPanel();
+
 </script>
 </body>
 </html>
